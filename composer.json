@@ -1,0 +1,8 @@
+{
+    "require": {
+        "razorpay/razorpay": "2.*",
+        "google/apiclient": "^2.0",
+        "mpdf/mpdf": "^6.1",
+        "twilio/sdk": "^7.13"
+    }
+}
