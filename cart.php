@@ -31,6 +31,31 @@ $all_products = $conn->query($sql);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+
+<script>
+  function updateAmount() 
+  {
+    var quantity = $('#quantity').val(); // Get the updated quantity
+        var productId = <?php echo $productId; ?>; // Get the product ID (PHP variable)
+        
+        // Use AJAX to send the updated quantity to the server
+        $.ajax({
+            type: 'POST',
+            url: 'update_amount.php', // Replace with your PHP script that handles the update
+            data: { productId: productId, quantity: quantity },
+            dataType: 'json',
+            success: function(response) {
+                // Update the total amount on the page with the response from the server
+                $('#totalAmount').html('<span>&#8377;</span> ' + response.newAmount);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }
+
+</script>
+
 <section class="h-100 h-custom" style="background-color: #eee;">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -82,12 +107,12 @@ $all_products = $conn->query($sql);
                         <div style="width: 70px;">
                         
                           <input type="hidden" name="product_id" value="<?php echo $productId; ?>">
-                        <input class ="form-control"type="number" name="quantity" id="quantity" min="1" max="100" value="<?php echo $quantity; ?>">
+                        <input class ="form-control"type="number" name="quantity" id="quantity" min="1" max="100" value="<?php echo $quantity; ?>" onchange="updateAmount()">
                     
                           <!-- <h5 class="fw-normal mb-0"><?php echo $quantity; ?></h5> -->
                         </div>
                         <div style="width: 80px;">
-                          <h5 class="mb-0"><span>&#8377;</span> <?php echo  $unitPrice; ?></h5>
+                          <h5 class="mb-0" id=""><span>&#8377;</span> <?php echo  $unitPrice; ?></h5>
                         </div>
                         <a href="deletecartproduct.php ? product_id=<?php echo $productId?>" style="color: #cecece;"><i class="fas fa-trash-alt"></i></a>
                       </div>
@@ -115,7 +140,7 @@ $checkoutAmount=$shipcharge+$totalAmount;
 
                     <div class="d-flex justify-content-between">
                       <p class="mb-2">Subtotal</p>
-                      <p class="mb-2"><span>&#8377;</span><?php echo $totalAmount; ?></p>
+                      <p class="mb-2" id="totalAmount"><span>&#8377;</span><?php echo $totalAmount; ?></p>
                     </div>
 
                     <div class="d-flex justify-content-between">

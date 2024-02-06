@@ -124,7 +124,11 @@
                 <div class="app-main__inner">
                 <div class="container mt-5">
     <h2 class="mb-4">ORDER LOGS</h2>
+    <?php
+        if (mysqli_num_rows($result_orders) > 0) 
+        {
 
+            ?>
     
     <!-- Order Table -->
     <table class="table table-bordered">
@@ -138,8 +142,6 @@
         </thead>
         <tbody>
         <?php
-        if (mysqli_num_rows($result_orders) > 0) 
-        {
             while ($row = mysqli_fetch_assoc($result_orders))
             {
                 $user_name = $row['user_name'];

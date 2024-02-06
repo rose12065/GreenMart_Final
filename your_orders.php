@@ -2,7 +2,7 @@
     require('connection.php');
     require('usernav.php');
     $id=$_SESSION['id'];
-    $query="SELECT o.o_id, o.order_id, p.product_name, o.order_date, o.quantity, o.total_amount,o.status,o.unit_price
+    $query="SELECT o.*, p.product_name
     FROM tbl_order o
     INNER JOIN tbl_product p ON o.product_id = p.product_id
     WHERE o.user_id = $id and o.status=0";
@@ -39,6 +39,9 @@
             <tbody>
                 <!-- Sample Order Data (You would fetch this from your database) -->
 <?php
+ if (mysqli_num_rows($all_product) > 0) 
+ {
+
 while ($row = mysqli_fetch_assoc($all_product)) {
 ?>
                 <tr>
@@ -50,22 +53,29 @@ while ($row = mysqli_fetch_assoc($all_product)) {
                     <td><?php echo $row['total_amount']; ?></td>
 
                     <?php
-                        if ($row['status']=='Delivered'){
+                        if ($row['delivery_status']==1){
                             echo'<td><span class="badge badge-success">Delivered</span></td>';
                         }
-                        else if($row['status']=='Not Delivered'){
+                        else if($row['delivery_status']==0){
                             echo'<td><span class="badge badge-warning">Not Delivered</span></td>';
                         }
-
-                ?>
+                      else if($row['status']==0 and $row['delievry_status']==0){
+                            echo'<td>    
+                            <a href="cancelOrder.php?order_id=<?php echo $row["o_id"];?><span class="badge badge-warning">Cancel</span></a>
+                        </td>';
+                       } 
+                ?>     
                     
-                    <td>
-                        <a href="cancelOrder.php?order_id=<?php echo $row['o_id'];?>" class="btn btn-danger btn-sm">Cancel</a>
-                    </td>
                 </tr>
 
                 <?php
 }
+ }
+ else{
+    echo '<div class="alert alert-info" role="alert">
+            <span><h5>No orders </h5></span>
+          </div>';
+ }
                 ?>
                 <!-- Add more rows for each order -->
             </tbody>
