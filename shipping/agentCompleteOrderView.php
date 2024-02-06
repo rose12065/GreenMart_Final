@@ -1,43 +1,29 @@
 <?php
     require('../connection.php');
     $agentId=$_SESSION['agnetid'];
-    $sql_delivery="SELECT * FROM tbl_delivery_register WHERE delivery_id = $agentId";
+    $sql_delivery="SELECT d.*, r.email AS role_email,r.password AS role_password
+    FROM tbl_delivery_register d
+    JOIN tbl_role r ON d.role_id = r.role_id
+    WHERE d.role_id = $agentId";
     $all_delivery = $conn->query($sql_delivery);
     while ($row = mysqli_fetch_assoc($all_delivery)){
         $agent_name = $row['agent_name'];
-        $agent_email = $row['email'];
+        $agent_email = $row['role_email'];
         $agent_status = $row['status'];
         $agent_phone = $row['phone'];
     }
-        $sql = "SELECT 
-                    o.order_id,
-                    o.user_id,
-                    o.delivery_status,
-                    o.order_date,
-                    p.address_id,
-                    p.total_amount,
-                    u.user_name
-                FROM 
-                    tbl_order o
-                JOIN 
-                    tbl_price p ON o.price_id = p.price_id
-                JOIN 
-                    tbl_user_register u ON o.user_id = u.user_id
-                WHERE 
-                    o.delivery_status = 0
-                    AND o.status = 0
-                    AND p.status = 0";
-                    
 
-        $result = $conn->query($sql);
+        $sql_orders="SELECT o.*,a.*,u.*, count(o.order_id) AS order_count FROM tbl_order o 
+                     JOIN tbl_user_register u on u.role_id = o.user_id 
+                     JOIN tbl_address a on a.user_id = o.user_id 
+                     WHERE o.delivery_status = 1 AND o.status = 0 
+                     AND o.delivery_agent_id = $agentId 
+                     GROUP BY order_id";
+        $result_orders = $conn->query($sql_orders);
 
-        $conn->close();
+       
 ?>
 
-
-    
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,7 +39,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="path/to/pe-icon-7-stroke/css/pe-icon-7-stroke.css">
     <link rel="stylesheet" href="path/to/pe-icon-7-stroke/css/helper.css">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
 
 </head>
 <body>
@@ -137,46 +123,102 @@
             <div class="app-main__outer">
                 <div class="app-main__inner">
                 <div class="container mt-5">
-                <div class="row">
-                    <!-- Example card 1 -->
-                    <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-header bg-success text-white">
-                        Order Placed
-                        </div>
-                        <div class="card-body">
-                        <h5 class="card-title">Total: ₹1,459.00</h5>
-                        <p class="card-text">Ship to: Rose Roy</p>
-                        <p class="card-text">Order # 406-3663445-5843514</p>
-                        <a href="#" class="btn btn-primary">View Order Details</a>
-                        </div>
-                    </div>
-                    </div>
+    <h2 class="mb-4">ORDER LOGS</h2>
 
-                    <!-- Example card 2 -->
-                    <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-header bg-success text-white">
-                        Order Placed
-                        </div>
-                        <div class="card-body">
-                        <h5 class="card-title">Total: ₹1,459.00</h5>
-                        <p class="card-text">Ship to: Rose Roy</p>
-                        <p class="card-text">Order # 406-3663445-5843514</p>
-                        <a href="#" class="btn btn-primary">View Order Details</a>
-                        </div>
-                    </div>
-                    </div>
+    
+    <!-- Order Table -->
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer Name</th>
+            <th>Delivery Address</th>
+            <th>Order Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        if (mysqli_num_rows($result_orders) > 0) 
+        {
+            while ($row = mysqli_fetch_assoc($result_orders))
+            {
+                $user_name = $row['user_name'];
+                $user_mobile = $row['user_mobile'];
+                $order_id = $row['order_id'];
+                $user_id = $row['user_id'];
+                $delivery_status = $row['delivery_status'];
+                $order_date = $row['order_date']; 
+                $address_id = $row['address_id'];
+                $flat = $row['flat'];
+                $landmark = $row['landmark'];
+                $pincode = $row['pincode']; 
+                $count = $row['order_count'];
+            
+    ?>
+        <!-- Sample Data (Replace with actual data) -->
+        <tr>
+            <td><?php echo $order_id ?></td>
+            <td><?php echo $user_name ?></td>
+            <td><?php echo $flat. '(H), '.$landmark.  " P.O".', '. $pincode ?></td>
+            <?php 
+                if($delivery_status==0)
+                {
+                    ?>
+                   <td class="text-center">
+                    <div class="badge badge-warning">PENDING</div>
+                </td>
 
-                    <!-- Add more cards as needed -->
+                <form method="POST">
+                    <td>
+                            <button type="submit" name="delivery_success" class="btn btn-success btn-sm">Delivered</button>
+                    </td>
+                </form>
+               <?php
+                }
+                else
+                {
+                    ?>
+                    <td class="text-center">
+                    <div class="badge badge-success">DELIVERED</div>
+                 <?php
+                }
+            ?>
+            
+            
+        </tr>
+        <?php
+  }
+    }
+    else {
+        // No orders received yet
+        echo '<div class="alert alert-info" role="alert">
+            <span><h5>No orders have been received yet....</h5></span>
+          </div>';
+    }
 
-                </div>
-                </div>
+    if(isset($_POST['delivery_success']))
+    {
+        $sql_delivery_status_update = "UPDATE tbl_order SET delivery_status = 1 WHERE order_id =  '$orderId'";
+        if ($conn->query($sql_delivery_status_update) == TRUE)
+        {
+            echo'<script>alert("Do you successfully delivered")</script>';
+        }
+    }
+    $conn->close();
+  ?>
+        <!-- Add more rows based on actual data -->
+        </tbody>
+    </table>
+</div>
 
-                <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </div>
+</div>
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+            
         </div>
     </div>
 </div>

@@ -148,7 +148,7 @@
           <p class="card-text">Location : <?php echo $landmark. ', '. $pincode ?>  </p>
           <p class="card-text">Items : <?php echo $count ?>  </p>
           
-          <a href="acceptOrder.php ? order_id= <?php echo $order_id ?>" class="btn btn-success">ACCEPT ORDER</a>
+          <a href="acceptOrder.php ? order_id=<?php echo $order_id ?>" class="btn btn-success">ACCEPT ORDER</a>
           
         </div>
       </div>

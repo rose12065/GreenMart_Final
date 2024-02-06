@@ -12,24 +12,21 @@
         $agent_status = $row['status'];
         $agent_phone = $row['phone'];
     }
-    if( isset($_GET['order_id'])){
+    if(isset($_GET['order_id'])){
         $orderId=$_GET['order_id'];
-        
-        $sql = "SELECT o.*, p.*, u.*, a.*
-        FROM tbl_order o
-        JOIN tbl_price p ON o.price_id = p.price_id
-        JOIN tbl_user_register u ON u.role_id = p.user_id
-        JOIN tbl_address a ON o.user_id = a.user_id
-        WHERE o.order_id = '$orderId' 
-        AND o.delivery_status = 0 
-        AND o.status = 0 
-        AND p.status = 0";
-    
-    
-    
-    $result = $conn->query($sql);
-    
-    $conn->close();
+        $sql_agent_update = "UPDATE tbl_order SET delivery_agent_id = $agentId WHERE order_id =  '$orderId'";
+        $result_agent_update = $conn->query($sql_agent_update);
+
+        $sql_orders="SELECT o.*,a.*,u.*, count(o.order_id) AS order_count FROM tbl_order o 
+                     JOIN tbl_user_register u on u.role_id = o.user_id 
+                     JOIN tbl_address a on a.user_id = o.user_id 
+                     WHERE o.delivery_status = 0 AND o.status = 0 
+                     AND o.delivery_agent_id = $agentId";
+        $result_orders = $conn->query($sql_orders);
+
+    }
+
+       
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +53,6 @@
         <div class="app-header header-shadow">
             <!-- Agent Header Content -->
             <!-- ... (similar to the admin dashboard) -->
-            
             
         </div>
 
@@ -132,44 +128,99 @@
             <div class="app-main__outer">
                 <div class="app-main__inner">
                 <div class="container mt-5">
-                <div class="row">
-                <?php
-  while ($row = mysqli_fetch_assoc($result)) {
-        $user_name = $row['user_name'];
-        $user_mobile = $row['user_mobile'];
-        $order_id = $row['order_id'];
-        $user_id = $row['user_id'];
-        $delivery_status = $row['delivery_status'];
-        $order_date = $row['order_date'];
-        $address_id = $row['address_id'];
-        $total_amount = $row['total_amount'];
-        $landmark = $row['landmark'];
-        $pincode = $row['pincode']; 
-        $count = $row['order_count'];    
+    <h2 class="mb-4">ORDER LOGS</h2>
 
-    ?>
-    <div class="container mt-5">
-    <div class="card text-center">
-        <div class="card-header bg-info text-white">
-            Order ID: 12345 <!-- Replace with dynamic order ID -->
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Customer Name: <?php echo $user_name ?></h5> <!-- Replace with dynamic customer name -->
-            <p class="card-text">Amount: &#8377;1500.00</p> <!-- Replace with dynamic amount -->
-            <p class="card-text">Address: 123 Main St, City, Country</p> <!-- Replace with dynamic address -->
-        </div>
-        <div class=" card-footer d-flex justify-content-center">
-            <button class="btn btn-danger">REJECT ORDER</button>&nbsp;&nbsp;&nbsp;&nbsp;
-            <button class="btn btn-warning">LOCATION</button>&nbsp;&nbsp;&nbsp;&nbsp;
-            <button class="btn btn-success">DELIVERED</button>
-        </div>
-    </div>
-</div>
     
-<?php
+    <!-- Order Table -->
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer Name</th>
+            <th>Delivery Address</th>
+            <th>Order Status</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        if (mysqli_num_rows($result_orders) > 0) 
+        {
+            while ($row = mysqli_fetch_assoc($result_orders))
+            {
+                $user_name = $row['user_name'];
+                $user_mobile = $row['user_mobile'];
+                $order_id = $row['order_id'];
+                $user_id = $row['user_id'];
+                $delivery_status = $row['delivery_status'];
+                $order_date = $row['order_date']; 
+                $address_id = $row['address_id'];
+                $flat = $row['flat'];
+                $landmark = $row['landmark'];
+                $pincode = $row['pincode']; 
+                $count = $row['order_count'];
+            
+    ?>
+        <!-- Sample Data (Replace with actual data) -->
+        <tr>
+            <td><?php echo $order_id ?></td>
+            <td><?php echo $user_name ?></td>
+            <td><?php echo $flat. '(H), '.$landmark.  " P.O".', '. $pincode ?></td>
+            <?php 
+                if($delivery_status==0)
+                {
+                    ?>
+                   <td class="text-center">
+                    <div class="badge badge-warning">PENDING</div>
+                </td>
+
+                <form method="POST">
+                    <td>
+                            <button type="submit" name="delivery_success" class="btn btn-success btn-sm">Delivered</button>
+                    </td>
+                </form>
+               <?php
+                }
+                else
+                {
+                    ?>
+                    <td class="text-center">
+                    <div class="badge badge-success">DELIVERED</div>
+                </td>
+                    <button class="btn btn-success btn-sm" >Details</button>
+                    <button class="btn btn-danger btn-sm" disabled>Not Delivered</button>
+                 </td>
+                 <?php
+                }
+            ?>
+            
+            
+        </tr>
+        <?php
   }
- }
+    }
+    else {
+        // No orders received yet
+        echo '<div class="alert alert-info" role="alert">
+            <span><h5>No orders have been received yet....</h5></span>
+          </div>';
+    }
+
+    if(isset($_POST['delivery_success']))
+    {
+        $sql_delivery_status_update = "UPDATE tbl_order SET delivery_status = 1 WHERE order_id =  '$orderId'";
+        if ($conn->query($sql_delivery_status_update) == TRUE)
+        {
+            echo'<script>alert("Do you successfully delivered")</script>';
+            echo'<script>window.location.href="agentCompleteOrderView.php";</script>';
+        }
+    }
+    $conn->close();
   ?>
+        <!-- Add more rows based on actual data -->
+        </tbody>
+    </table>
+</div>
 
   </div>
 </div>

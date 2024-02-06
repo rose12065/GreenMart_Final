@@ -114,7 +114,7 @@ require('navbar.php');
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 form-container">
-            <h2 class="mb-4">Job Application Form</h2>
+            <h2 class="mb-4">Agent Registration</h2>
             <form id="jobApplicationForm" name="myForm" onsubmit="return validateForm()"action="" method="post" enctype="multipart/form-data">
                 <!-- Name -->
                 <div class="form-group">
@@ -146,7 +146,7 @@ require('navbar.php');
 
                 <!-- CV File Upload -->
                 <div class="form-group">
-                    <label for="cv">Upload CV:</label>
+                    <label for="cv">Upload Driving Licence:</label>
                     <input type="file" class="form-control-file" id="cv" name="cv" accept=".pdf" onkeyup="validateCV()" required>
                     <span id="lblErrorCv" style="color: red"></span>
                 </div>
