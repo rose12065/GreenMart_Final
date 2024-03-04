@@ -12,7 +12,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
- 
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
  </head>
  <body>
   <div class="container">
@@ -40,7 +40,7 @@
          <div class="row">
         <div class="col-md-6 offset-md-3">
 
-        <form  method="post">
+        <form  method="post" onsubmit="return validateForm()">
             
             
             <div class="form-group">
@@ -56,6 +56,11 @@
                 <i class="bi bi-eye-slash" id="togglePassword"></i>
                 <span id="lblErrorPass" style="color: red"></span>
             </div>
+
+            <div class="form-group">
+        <!-- Google reCAPTCHA block -->
+        <div class="g-recaptcha" data-sitekey="6LfFfIEpAAAAAIMIkaxqrjqzRXkC1KIqi0S5_kMq"></div>
+      </div>
 
            <a href="recover_psw.php">forgot password ?</a><br><br>
            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -202,7 +207,18 @@ if(!isset($_SESSION['access_token']))
     if (isset($_POST['login'])) {
       $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
       $password = filter_var($_POST['pwd'],FILTER_SANITIZE_SPECIAL_CHARS);
+      if( !empty($email) && !empty($password)){
 
+        // reCAPTCHA validation
+        if(isset($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-response'])) {
+
+            // Google secret API
+            $secretAPIkey = '6LfFfIEpAAAAAElXWcntPb0QhGGjf5EoS_LIJVzb';
+
+            // reCAPTCHA response verification
+            $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$secretAPIkey.'&response='.$_POST['g-recaptcha-response']);
+            }
+          }
       $query = "SELECT * FROM tbl_role WHERE email='$email' AND password='$password'";
       $find_user = mysqli_query($conn,$query);
       $result = mysqli_fetch_all($find_user,MYSQLI_ASSOC);
@@ -292,6 +308,14 @@ if(!isset($_SESSION['access_token']))
         }
         this.classList.toggle('bi-eye');
     });
+    function validateForm() {
+            var recaptchaResponse = grecaptcha.getResponse();
+            if (recaptchaResponse.length == 0) {
+                alert("Please complete the reCAPTCHA challenge.");
+                return false; // Prevent form submission
+            }
+            return true; // Proceed with form submission
+        }
 </script>
 
 </html>

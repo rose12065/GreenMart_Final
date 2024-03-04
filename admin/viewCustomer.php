@@ -11,13 +11,13 @@
     }
     
     $sql_orderTotal="SELECT COUNT(*) as total_orders
-    FROM tbl_order";
+    FROM tbl_order WHERE delivery_status=0";
     $total_orderCount = $conn->query($sql_orderTotal);
     while($row=mysqli_fetch_assoc($total_orderCount)){
         $totalOrder=$row['total_orders'];
     }
 
-    $sql_customer="SELECT * FROM tbl_user_register";
+    $sql_customer="SELECT u.*,r.* FROM tbl_user_register u join tbl_role r on r.role_id=u.role_id";
     $total_customer = $conn->query($sql_customer);
 
 ?>
@@ -286,7 +286,7 @@
                                         <p class="text-muted mb-0"></p>
                                     </td>
                                     <td>
-                                        <span class="fw-normal mb-1"><?php echo $row['user_email'];  ?></span>
+                                        <span class="fw-normal mb-1"><?php echo $row['email'];  ?></span>
                                     </td>
                                     <!-- <td>
                                                         <?php

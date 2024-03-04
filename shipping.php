@@ -85,17 +85,19 @@ require('navbar.php');
         }
 
         function validateCV(){
-            var fileInput = document.getElementById('cv');
-            var filePath = fileInput.value;
-            var allowedExtensions = /(\.pdf)$/i;
+            var input = document.getElementById('cv');
+            var file = input.files[0];
+            var fileName = file.name.toLowerCase();
+            var fileSize = file.size;
 
-            if (!allowedExtensions.exec(filePath)) {
-                document.getElementById("lblErrorCV").innerText = "Please upload PDF files only.";
+            // Check if the file is a PDF
+            if (!fileName.endsWith('.pdf')) {
+                alert('Please select a PDF file.');
+                input.value = ''; // Clear the file input
                 return false;
-            }else {
-                document.getElementById("lblErrorCV").innerText = "";
-                return true;
             }
+
+            return true;
         }
 
         function validateForm() {
@@ -147,7 +149,7 @@ require('navbar.php');
                 <!-- CV File Upload -->
                 <div class="form-group">
                     <label for="cv">Upload Driving Licence:</label>
-                    <input type="file" class="form-control-file" id="cv" name="cv" accept=".pdf" onkeyup="validateCV()" required>
+                    <input type="file" class="form-control-file" id="cv" name="cv" accept=".pdf" onchange="validateCV(this)" required>
                     <span id="lblErrorCv" style="color: red"></span>
                 </div>
 
@@ -191,9 +193,6 @@ require('navbar.php');
             echo "Email is already registered.";
             exit();
         }
-
-
-
 
         $query="INSERT INTO tbl_role(email, password,  role)  values('$email',NULL,'DELIVERY')";
         if(mysqli_query($con,$query)){

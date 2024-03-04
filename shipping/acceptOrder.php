@@ -14,18 +14,19 @@
     }
     if(isset($_GET['order_id'])){
         $orderId=$_GET['order_id'];
-        $sql_agent_update = "UPDATE tbl_order SET delivery_agent_id = $agentId WHERE order_id =  '$orderId'";
+        $sql_agent_update = "UPDATE tbl_order SET delivery_agent_id = $agentId, delivery_status='Shipped' WHERE order_id =  '$orderId'";
         $result_agent_update = $conn->query($sql_agent_update);
 
         $sql_orders="SELECT o.*,a.*,u.*, count(o.order_id) AS order_count FROM tbl_order o 
-                     JOIN tbl_user_register u on u.role_id = o.user_id 
-                     JOIN tbl_address a on a.user_id = o.user_id 
-                     WHERE o.delivery_status = 0 AND o.status = 0 
-                     AND o.delivery_agent_id = $agentId";
+        JOIN tbl_user_register u on u.role_id = o.user_id 
+        JOIN tbl_address a on a.user_id = o.user_id 
+        WHERE o.delivery_status = 'Delivered' AND o.status = 0 
+        AND o.delivery_agent_id = $agentId 
+        GROUP BY order_id";
         $result_orders = $conn->query($sql_orders);
 
+    
     }
-
        
 ?>
 
@@ -198,6 +199,7 @@
         </tr>
         <?php
   }
+
     }
     else {
         // No orders received yet
@@ -215,7 +217,9 @@
             echo'<script>window.location.href="agentCompleteOrderView.php";</script>';
         }
     }
+
     $conn->close();
+
   ?>
         <!-- Add more rows based on actual data -->
         </tbody>

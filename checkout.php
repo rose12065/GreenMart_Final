@@ -3,7 +3,7 @@
 include('connection.php');
 include('usernav.php');
 $id = $_SESSION['id'];
-$sql= "SELECT * From tbl_user_register where user_id=$id";
+$sql= "SELECT * From tbl_user_register where role_id=$id";
 $all_product=$conn->query($sql);
 while ($row = mysqli_fetch_assoc($all_product)) {
 
@@ -77,7 +77,8 @@ $s="SELECT * FROM tbl_price WHERE user_id=$id";
               
               <div>
                 <p class="d-flex flex-column mb-0">
-                  <b><?php echo $username; ?></b>
+
+                  <b><?php echo $username;?></b>
                 </p>
               </div>
             </div>

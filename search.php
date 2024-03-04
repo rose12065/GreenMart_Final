@@ -1,6 +1,8 @@
 <?php
 // Establish a database connection
+
 require('connection.php');
+$user_id=$_SESSION['id'];
 if (isset($_POST['search'])) {
     
     $searchQuery = $_POST['search'];
@@ -10,6 +12,7 @@ if (isset($_POST['search'])) {
 
     // Execute the query
     $result = mysqli_query($conn, $sql);
+   
 
     // Check if any matching products were found
     if (mysqli_num_rows($result) > 0) {
@@ -24,6 +27,9 @@ if (isset($_POST['search'])) {
 
         while ($row = mysqli_fetch_assoc($result)) {
             $stock=$row['stock'];
+            $product_id=$row['product_id'];
+         $insert_query = "INSERT INTO tbl_pdt_recommendation (user_id, product_id) VALUES ('$user_id', '$product_id')";
+    mysqli_query($conn, $insert_query);
             ?>
 
             <div class="col">
@@ -46,7 +52,7 @@ if (isset($_POST['search'])) {
             <span class="price"><?php echo "Rs." . $row['unit_price'] ?></span>
 
             <!-- Hidden input fields for product_id and quantity -->
-            <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
+            <input type="hidden" name="product_id" id="product_id" value="<?php echo $row['product_id']; ?>">
             
             <div class="d-flex align-items-center justify-content-between">
                 <div class="input-group product-qty col-md-2 border border-secondary border-3">
@@ -64,10 +70,12 @@ if (isset($_POST['search'])) {
         ?>
 
        <?php
+
     } else {
         echo "No matching products found.";
     }
 }
+
 
 // Close the database connection
 mysqli_close($conn);

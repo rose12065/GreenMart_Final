@@ -181,7 +181,7 @@ $checkoutAmount=$shipcharge+$totalAmount;
 
     if ($conn->query($sqlupdate) === TRUE) {
         echo '<script>
-        window.location.href = "http://localhost/GreenMart/orderpage.php";
+        window.location.href = "http://localhost/GreenMart_final/orderpage.php";
         </script>';
        // header("Location: orderpage.php"); 
         exit;

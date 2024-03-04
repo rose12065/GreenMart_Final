@@ -16,7 +16,7 @@
         $sql_orders="SELECT o.*,a.*,u.*, count(o.order_id) AS order_count FROM tbl_order o 
                      JOIN tbl_user_register u on u.role_id = o.user_id 
                      JOIN tbl_address a on a.user_id = o.user_id 
-                     WHERE o.delivery_status = 1 AND o.status = 0 
+                     WHERE o.delivery_status IN ('delivered', 'shipped', 'pending') AND o.status = 0 
                      AND o.delivery_agent_id = $agentId 
                      GROUP BY order_id";
         $result_orders = $conn->query($sql_orders);
@@ -163,7 +163,7 @@
             <td><?php echo $user_name ?></td>
             <td><?php echo $flat. '(H), '.$landmark.  " P.O".', '. $pincode ?></td>
             <?php 
-                if($delivery_status==0)
+                if($delivery_status=='Shipped')
                 {
                     ?>
                    <td class="text-center">
@@ -172,6 +172,7 @@
 
                 <form method="POST">
                     <td>
+                            <input type="hidden" class="hidden" name="orderid" id="orderid" value="<?php echo  $order_id ?>">
                             <button type="submit" name="delivery_success" class="btn btn-success btn-sm">Delivered</button>
                     </td>
                 </form>
@@ -200,7 +201,8 @@
 
     if(isset($_POST['delivery_success']))
     {
-        $sql_delivery_status_update = "UPDATE tbl_order SET delivery_status = 1 WHERE order_id =  '$orderId'";
+        $order_id=$_POST['orderid'];
+        $sql_delivery_status_update = "UPDATE tbl_order SET delivery_status = 'Delivered' WHERE order_id =  '$order_id'";
         if ($conn->query($sql_delivery_status_update) == TRUE)
         {
             echo'<script>alert("Do you successfully delivered")</script>';

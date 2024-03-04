@@ -20,7 +20,7 @@
     $total_order = $conn->query($sql_order);
     
     $sql_orderTotal="SELECT COUNT(*) as total_orders
-    FROM tbl_order";
+    FROM tbl_order WHERE delivery_status=0";
     $total_orderCount = $conn->query($sql_orderTotal);
     while($row=mysqli_fetch_assoc($total_orderCount)){
         $totalOrder=$row['total_orders'];
@@ -340,7 +340,7 @@
                             <?php
                                                 while($row=mysqli_fetch_assoc($total_order)){
                                                     //$totalOrder=$row['total_orders'];
-                                                    $status=$row['status'];
+                                                    $status=$row['delivery_status'];
                                                     
                                                 
                                     ?>
@@ -364,7 +364,7 @@
                                     </td>
                                     <td>
                                                         <?php
-                                                            if ($status=="delivered"){
+                                                            if ($status==1){
                                                                     echo '<span class="badge badge-success rounded-pill d-inline">Delivered</span>';
                                                             }
                                                             else{

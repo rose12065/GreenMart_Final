@@ -15,7 +15,7 @@ if (isset($_GET['delivery_id'])) {
         $info = mysqli_fetch_assoc($result);
 
         // Assuming the 'cv' column stores the filename in the 'pdf' folder
-        $filename = "C:/xampp/htdocs/GreenMart/pdf/" . $info['cv'];
+        $filename = "C:/xampp/htdocs/GreenMart_final/pdf/" . $info['cv'];
 
         // Check if the file exists
         if (file_exists($filename)) {

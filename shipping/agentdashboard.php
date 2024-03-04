@@ -169,8 +169,8 @@
                 <div class="card-body">
                     <h5 class="card-title">Delivery Status</h5>
                     <!-- Display delivery status information here -->
-                    <p class="card-text">Pending Deliveries: 5</p>
-                    <p class="card-text">Completed Deliveries: 10</p>
+                    <p class="card-text">Pending Deliveries: </p>
+                    <p class="card-text">Completed Deliveries: </p>
                 </div>
             </div>
             <?php

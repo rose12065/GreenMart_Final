@@ -28,8 +28,8 @@ while ($row = mysqli_fetch_assoc($all_cart)) {
     $total = $quantity * $unitPrice;
 
     // Insert order details into tbl_order
-    $order_query = "INSERT INTO tbl_order(order_id, user_id, product_id,price_id, quantity, unit_price, total_amount, order_date)
-                    VALUES ('$commonOrderId', '$id', '$productId','$priceId', '$quantity', '$unitPrice', '$total', '$date')";
+    $order_query = "INSERT INTO tbl_order(order_id, user_id, product_id,price_id, quantity, unit_price ,order_date,delivery_status)
+                    VALUES ('$commonOrderId', '$id', '$productId','$priceId', '$quantity', '$unitPrice', '$date','Ordered')";
     
     if ($conn->query($order_query)) {
         // Remove the product from the cart

@@ -1,9 +1,13 @@
 <?php
 
-include('connection.php');
+include 'connection.php';
+$userId = $_SESSION['id'];
+$category_select = "SELECT * FROM tbl_category ";
+$all_cat = $conn->query($category_select);
 
-$category_select="SELECT * FROM tbl_category ";
-$all_cat=$conn->query($category_select);
+$pdt_recommed = " SELECT p.*, r.* FROM tbl_pdt_recommendation r join tbl_product p on p.product_id=r.product_id where user_id=$userId order by rec_id desc";
+$recommend_pdt = $conn->query($pdt_recommed);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,12 +27,12 @@ $all_cat=$conn->query($category_select);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
   </head>
 <body>
-   
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <defs>
         <symbol xmlns="http://www.w3.org/2000/svg" id="link" viewBox="0 0 24 24">
@@ -86,8 +90,8 @@ $all_cat=$conn->query($category_select);
             </button>
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav">
-                   
-                    
+
+
                 </ul>
                 <form id="search-form" class="d-flex">
     <input type="text" id="search-input" placeholder="Search for products" class="form-control me-2">
@@ -100,7 +104,7 @@ $all_cat=$conn->query($category_select);
 $(document).ready(function() {
     $('#search-form').submit(function(event) {
         event.preventDefault(); // Prevent the form from submitting via the browser
-        
+
         // Get the search query from the input field
         var searchQuery = $('#search-input').val();
 
@@ -119,11 +123,11 @@ $(document).ready(function() {
 
             </div>
 
-            
+
             <div class="d-flex">
                 <ul class="navbar-nav">
                 <li class="nav-item">
-                <?php echo "Welcome ". $_SESSION['name']  ?>
+                <?php echo "Welcome " . $_SESSION['name'] ?>
                         </a>
                     </li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <li class="nav-item">
@@ -135,7 +139,7 @@ $(document).ready(function() {
                 <li class="nav-item">
                         <a class="nav-link" href="cart.php">
                             <i class="fas fa-shopping-cart"></i>
-                            
+
                         </a>
                     </li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <li class="nav-item dropdown">
@@ -153,17 +157,75 @@ $(document).ready(function() {
                 </ul>
             </div>
         </div>
-        
+
     </nav><br><br>
+
     <div id="search-results"></div>
 
+    <div class="tabs-header d-flex justify-content-between border-bottom my-5">
+
+    <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
+                  <?php
+if (mysqli_num_rows($recommend_pdt) > 0) {
+    ?>
+                <h3>Recommended Products</h3>
+
+
+                <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                
+                  <?php
+while ($row = mysqli_fetch_assoc($recommend_pdt)) {
+        $stock = $row['stock'];
+        ?>
+        <div class="col">     
+        <form class="product-item" method="post">
+            <button type="submit" class="btn-wishlist" name="wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></button>
+            <figure>
+                <a href="productdetails.php?product_id=<?php echo $row['product_id'] ?>" title="Product Title">
+
+                    <?php echo '<img  src="data:images/jpeg;base64,' . base64_encode($row['product_image']) . '" class="tab-image" />'; ?>
+
+                </a>
+               <?php if ($stock <= 0) {
+            echo '<div class="alert alert-danger" role="alert">
+        OUT OF STOCK
+      </div>';
+        }?>
+            </figure>
+            <h3><?php echo $row['product_name'] ?></h3>
+            <h6><?php echo $row['product_discription'] ?></h6>
+            <span class="price"><?php echo "Rs." . $row['unit_price'] ?></span>
+
+            <!-- Hidden input fields for product_id and quantity -->
+            <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
+
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="input-group product-qty col-md-2 border border-secondary border-3">
+                    <input type="number" id="quantity" name="quantity" class="form-control"value="1" min="1" max="100">
+                </div>
+                  <?php
+if ($stock > 0) {
+            echo '<button type="submit" id="add" class="btn btn-default btn-xs pull-right" name="add_to_cart">Add to Cart</button>';
+        }
+        ?>
+
+              </div>
+        </form>
+        </div>
+<?php
+}
+}
+?>
+
+                    </div>
     <section class="py-1 overflow-hidden">
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
 
             <div class="section-header d-flex justify-content-between mb-5">
-              <h2 class="section-title">Category</h2> 
+              <h2 class="section-title">Category</h2>
           </div>
         </div>
         <div class="row">
@@ -172,18 +234,18 @@ $(document).ready(function() {
             <div class="category-carousel swiper">
               <div class="swiper-wrapper">
                 <?php
-                  while($row = mysqli_fetch_assoc($all_cat)){
-                    $cat=$row['category_id'];
-                    $catName=$row['category_name'];
-                  
-                ?>
-                <a href="product-categories.php ? cat_id=<?php echo "$cat" ;?>" class="nav-link category-item swiper-slide">
+while ($row = mysqli_fetch_assoc($all_cat)) {
+    $cat = $row['category_id'];
+    $catName = $row['category_name'];
+
+    ?>
+                <a href="product-categories.php ? cat_id=<?php echo "$cat"; ?>" class="nav-link category-item swiper-slide">
                   <img src="images/icon-bread-herb-flour.png">
-                  <h3 class="category-title"><?php echo "$catName" ;?></h3>
+                  <h3 class="category-title"><?php echo "$catName"; ?></h3>
                 </a>
                 <?php
-                  }
-               ?>
+}
+?>
               </div>
             </div>
 
@@ -192,18 +254,17 @@ $(document).ready(function() {
       </div>
     </section>
     <?php
-$id=$_SESSION['id'];
+$id = $_SESSION['id'];
 $sql = "SELECT * FROM tbl_product ";
-$all_product=$conn->query($sql);
+$all_product = $conn->query($sql);
 
 /*$find_user = mysqli_query($conn,$query);
 $result = mysqli_fetch_all($find_user,MYSQLI_ASSOC);
 if(count($result) > 0) {
-  $name= $result[0]['product_name']; // Access name from $result array
-  $price= $result[0]['unit_price'];
-  $description = $result[0]['product_discription'];
-  $image= $result[0]['product_image'];
-  
+$name= $result[0]['product_name']; // Access name from $result array
+$price= $result[0]['unit_price'];
+$description = $result[0]['product_discription'];
+$image= $result[0]['product_image'];
 
 }*/
 ?>
@@ -213,12 +274,12 @@ if(count($result) > 0) {
           <div class="col-md-12">
 
             <div class="banner-blocks">
-            
+
               <div class="banner-ad large bg-info block-1">
 
                 <div class="swiper main-swiper">
                   <div class="swiper-wrapper">
-                    
+
                     <div class="swiper-slide">
                       <div class="row banner-content p-5">
                         <div class="content-wrapper col-md-7">
@@ -232,7 +293,7 @@ if(count($result) > 0) {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div class="swiper-slide">
                       <div class="row banner-content p-5">
                         <div class="content-wrapper col-md-7">
@@ -246,7 +307,7 @@ if(count($result) > 0) {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div class="swiper-slide">
                       <div class="row banner-content p-5">
                         <div class="content-wrapper col-md-7">
@@ -261,12 +322,12 @@ if(count($result) > 0) {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div class="swiper-pagination"></div>
 
                 </div>
               </div>
-              
+
               <div class="banner-ad bg-success block-2" style="background:url('images/ad-image-1.png') no-repeat;background-position: right bottom">
                 <div class="row banner-content p-5">
 
@@ -293,24 +354,24 @@ if(count($result) > 0) {
 
             </div>
             <!-- / Banner Blocks -->
-              
+
           </div>
         </div>
       </div>
     </section>
 <section class="py-2">
       <div class="container-fluid">
-        
+
         <div class="row">
-          
+
           <div class="col-md-12">
 
             <div class="bootstrap-tabs product-tabs">
               <div class="tabs-header d-flex justify-content-between border-bottom my-5">
-               
-                
+
+
               </div>
-              <?php 
+              <?php
 $sql_brands = "SELECT DISTINCT s.company
 FROM tbl_seller_register s
 JOIN tbl_product p ON s.seller_id = p.seller_id";
@@ -351,30 +412,30 @@ if ($result_brands->num_rows > 0) {
         // Display filtered products in the right sidebar
         //echo "<div style='float: left;'>";
         echo "<h4>Filtered Products:</h4>";
-?>
+        ?>
         <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
 
           <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 ">
-         <?php 
-        if ($result_filtered_products->num_rows > 0) {
+         <?php
+if ($result_filtered_products->num_rows > 0) {
             while ($row = $result_filtered_products->fetch_assoc()) {
-              $stock=$row['stock'];
-              ?>
+                $stock = $row['stock'];
+                ?>
              <div class="col">
         <form class="product-item" method="post">
             <button type="submit" class="btn-wishlist" name="wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></button>
             <figure>
                 <a href="productdetails.php?product_id=<?php echo $row['product_id'] ?>" title="Product Title">
-                    
-                    <?php  echo '<img  src="data:images/jpeg;base64,'.base64_encode($row['product_image']).'" class="tab-image" />';?>
-                           
+
+                    <?php echo '<img  src="data:images/jpeg;base64,' . base64_encode($row['product_image']) . '" class="tab-image" />'; ?>
+
                 </a>
                <?php if ($stock <= 0) {
-        echo '<div class="alert alert-danger" role="alert">
+                    echo '<div class="alert alert-danger" role="alert">
         OUT OF STOCK
       </div>';
-    } ?>
+                }?>
             </figure>
             <h3><?php echo $row['product_name'] ?></h3>
             <h6><?php echo $row['product_discription'] ?></h6>
@@ -382,22 +443,22 @@ if ($result_brands->num_rows > 0) {
 
             <!-- Hidden input fields for product_id and quantity -->
             <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
-            
+
             <div class="d-flex align-items-center justify-content-between">
                 <div class="input-group product-qty col-md-2 border border-secondary border-3">
                     <input type="number" id="quantity" name="quantity" class="form-control"value="1" min="1" max="100">
                 </div>
-                  <?php 
-                        if ($stock > 0) {
-                          echo '<button type="submit" id="add" class="btn btn-default btn-xs pull-right" name="add_to_cart">Add to Cart</button>';
-                      }  
-                  ?>
-                
+                  <?php
+if ($stock > 0) {
+                    echo '<button type="submit" id="add" class="btn btn-default btn-xs pull-right" name="add_to_cart">Add to Cart</button>';
+                }
+                ?>
+
               </div>
         </form>
     </div>
               <?php
-            }
+}
         } else {
             echo "No products found.";
         }
@@ -407,7 +468,7 @@ if ($result_brands->num_rows > 0) {
 } else {
     echo "No brands found.";
 }
-  
+
 ?>
               <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
@@ -415,22 +476,22 @@ if ($result_brands->num_rows > 0) {
                   <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 ">
                   <?php
 while ($row = mysqli_fetch_assoc($all_product)) {
-  $stock=$row['stock'];
-?>
+    $stock = $row['stock'];
+    ?>
     <div class="col">
         <form class="product-item" method="post">
             <button type="submit" class="btn-wishlist" name="wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></button>
             <figure>
                 <a href="productdetails.php?product_id=<?php echo $row['product_id'] ?>" title="Product Title">
-                    
-                    <?php  echo '<img  src="data:images/jpeg;base64,'.base64_encode($row['product_image']).'" class="tab-image" />';?>
-                           
+
+                    <?php echo '<img  src="data:images/jpeg;base64,' . base64_encode($row['product_image']) . '" class="tab-image" />'; ?>
+
                 </a>
                <?php if ($stock <= 0) {
         echo '<div class="alert alert-danger" role="alert">
         OUT OF STOCK
       </div>';
-    } ?>
+    }?>
             </figure>
             <h3><?php echo $row['product_name'] ?></h3>
             <h6><?php echo $row['product_discription'] ?></h6>
@@ -438,17 +499,17 @@ while ($row = mysqli_fetch_assoc($all_product)) {
 
             <!-- Hidden input fields for product_id and quantity -->
             <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
-            
+
             <div class="d-flex align-items-center justify-content-between">
                 <div class="input-group product-qty col-md-2 border border-secondary border-3">
                     <input type="number" id="quantity" name="quantity" class="form-control"value="1" min="1" max="100">
                 </div>
-                  <?php 
-                        if ($stock > 0) {
-                          echo '<button type="submit" id="add" class="btn btn-default btn-xs pull-right" name="add_to_cart">Add to Cart</button>';
-                      }  
-                  ?>
-                
+                  <?php
+if ($stock > 0) {
+        echo '<button type="submit" id="add" class="btn btn-default btn-xs pull-right" name="add_to_cart">Add to Cart</button>';
+    }
+    ?>
+
               </div>
         </form>
     </div>
@@ -469,48 +530,45 @@ while ($row = mysqli_fetch_assoc($all_product)) {
 // Check if the form is submitted
 if (isset($_POST['add_to_cart'])) {
     // Get the product_id and quantity from the form submission
-    $userId=$_SESSION['id'];
+    $userId = $_SESSION['id'];
     $product_id = $_POST['product_id'];
     $quantity = $_POST['quantity'];
-    $new_quantity= $stock-$quantity;
-    
+    $new_quantity = $stock - $quantity;
+
     echo $userId;
     // You should perform further validation and sanitation of these values here.
     // Assuming you have a database connection established
-    $sql_quantity="UPDATE `tbl_product` SET `stock`='$new_quantity' WHERE product_id=$product_id";
+    $sql_quantity = "UPDATE `tbl_product` SET `stock`='$new_quantity' WHERE product_id=$product_id";
     $conn->query($sql_quantity);
 
-      $sql = "INSERT INTO tbl_cart_items (product_id,user_id,quantity) VALUES ('$product_id', '$userId','$quantity')";
-            if ($conn->query($sql) === TRUE) {
-            echo  '<script>
+    $sql = "INSERT INTO tbl_cart_items (product_id,user_id,quantity) VALUES ('$product_id', '$userId','$quantity')";
+    if ($conn->query($sql) === true) {
+        echo '<script>
               alert("Product details inserted successfully.");
             </script>';
-          
-            
-       } else {
-         echo "Error: " . $conn->error;
-       }
-        
+
+    } else {
+        echo "Error: " . $conn->error;
+    }
+
     // Close the database connection
     mysqli_close($conn);
 }
 
-if (isset($_POST['wishlist'])){
-  $userId=$_SESSION['id'];
-  $product_id = $_POST['product_id'];
- 
+if (isset($_POST['wishlist'])) {
+    $userId = $_SESSION['id'];
+    $product_id = $_POST['product_id'];
 
-  $sql = "INSERT INTO tbl_wishlist (user_id,product_id) VALUES ('$userId','$product_id')";
-            if ($conn->query($sql) === TRUE) {
-              echo '<script>
+    $sql = "INSERT INTO tbl_wishlist (user_id,product_id) VALUES ('$userId','$product_id')";
+    if ($conn->query($sql) === true) {
+        echo '<script>
               alert("Product added to wishlist.");
             </script>';
-          
-            
-       } else {
-         echo "Error: " . $conn->error;
-       }
-        
+
+    } else {
+        echo "Error: " . $conn->error;
+    }
+
     // Close the database connection
     mysqli_close($conn);
 }
@@ -522,24 +580,20 @@ if (isset($_POST['wishlist'])){
 
 // if (isset($_POST['add_to_cart'])) {
 
-   
 //   $userId=$_SESSION['id'];
 //   $productId=
 
-
-    
 //   //   // Insert the product details into the cart table
 //   //   $insertQuery = "INSERT INTO tbl_cart_items (user_id, product_id,quantity) VALUES ('$userId', '$productId','$quantity')";
 //   //   if ($conn->query($sql) === TRUE) {
 //   //     echo "Address inserted successfully.";
-      
+
 //   // } else {
 //   //     echo "Error: " . $conn->error;
 //   // }
-  
-  
+
 //   // }
-  
+
 //   mysqli_close($conn);
 ?>
 
@@ -555,6 +609,6 @@ if (isset($_POST['wishlist'])){
     <script src="js/plugins.js"></script>
     <script src="js/script.js"></script>
     <script src="js/myscripts.js"></script>
-    
+
 </body>
 </html>

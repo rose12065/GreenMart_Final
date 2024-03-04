@@ -11,7 +11,7 @@
     }
     
     $sql_orderTotal="SELECT COUNT(*) as total_orders
-    FROM tbl_order";
+    FROM tbl_order WHERE delivery_status=0";
     $total_orderCount = $conn->query($sql_orderTotal);
     while($row=mysqli_fetch_assoc($total_orderCount)){
         $totalOrder=$row['total_orders'];
@@ -286,7 +286,7 @@
       <td><?php echo $row['email'] ?></td>
       <td><?php echo $row['phone'] ?></td>
       <td><?php echo $row['experience'] ?></td>
-      <td><a href="downloadCV.php?delivery_id=<?php echo $row['role_id']; ?>" target="_blank">Download CV</a></td>     
+      <td><a href="downloadCV.php?delivery_id=<?php echo $row['role_id']; ?>" target="_blank">Download</a></td>     
 <td>
 <form action="" method="post">
 <?php

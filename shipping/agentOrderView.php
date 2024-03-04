@@ -12,7 +12,7 @@
         $agent_status = $row['status'];
         $agent_phone = $row['phone'];
     }
-    $sql = "SELECT o.*,p.*,u.*,a.*, count(o.order_id) AS order_count from tbl_order o join tbl_price p on o.price_id = p.price_id join tbl_user_register u on u.role_id = p.user_id join tbl_address a on o.user_id = a.user_id where o.delivery_status = 0 and o.status = 0 and p.status = 0 group by order_id";
+    $sql = "SELECT o.*,p.*,u.*,a.*, count(o.order_id) AS order_count from tbl_order o join tbl_price p on o.price_id = p.price_id join tbl_user_register u on u.role_id = p.user_id join tbl_address a on o.user_id = a.user_id where o.delivery_status = 'Ordered' and o.status = 0 and p.status = 0 group by order_id";
     
     $result = $conn->query($sql);
 

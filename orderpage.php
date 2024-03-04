@@ -101,6 +101,7 @@ if (isset($_GET['update_status']) && $_GET['update_status'] === 'true') {
                                 ?>
                             </div>
                     </div>
+                    
                     <div class="col-md-5 col-xl-4 offset-xl-1">
                         <div class="py-4 d-flex justify-content-end">
                             <!-- <h6><a href="#!">Cancel and return to website</a></h6> -->
@@ -109,6 +110,18 @@ if (isset($_GET['update_status']) && $_GET['update_status'] === 'true') {
                             <div class="p-2 me-3">
                                 <h4>Order Recap</h4>
                             </div>
+                            <div class="rounded d-flex flex-column p-2 mt-3" style="background-color: #f8f9fa;">
+                            <p class="customDemo"></p>
+                            <div class="border-top px-2 mx-2"></div>
+                            <div class="p-2 d-flex pt-3">
+                                <div class="col-8">
+                                    <input type="text" class="form-control" id="couponCode" name="couponCode" placeholder="Enter coupon code">
+                                </div>
+                                <div class="ms-auto">
+                                    <button type="submit" class="btn btn-secondary" name="coupon-apply" onclick="applyCoupon()">Apply</button>
+                                </div>
+                            </div>
+                            </div>  
                             <div class="border-top px-2 mx-2"></div>
                             <div class="p-2 d-flex pt-3">
                                 <div class="col-8">Items Charge</div>
@@ -124,21 +137,6 @@ if (isset($_GET['update_status']) && $_GET['update_status'] === 'true') {
                             <div class="p-2 d-flex pt-3">
                                 <div class="col-8"><b>Total</b></div>
                                 <div class="ms-auto"><b class="text-success" id="checkoutAmount"><span>&#8377;</span><?php echo $checkoutAmount ?></b></div>
-                            </div>
-                            <div class="rounded d-flex flex-column p-2 mt-3" style="background-color: #f8f9fa;">
-                            <div class="p-2 me-3">
-                                <h4>Apply Coupon</h4>
-                            </div>
-                            <p class="customDemo"></p>
-                            <div class="border-top px-2 mx-2"></div>
-                            <div class="p-2 d-flex pt-3">
-                                <div class="col-8">
-                                    <input type="text" class="form-control" id="couponCode" name="couponCode" placeholder="Enter coupon code">
-                                </div>
-                                <div class="ms-auto">
-                                    <button type="submit" class="btn btn-secondary" name="coupon-apply" onclick="applyCoupon()">Apply</button>
-                                </div>
-                            </div>
                             </div>
 
                             <input type="hidden" name="checkoutAmount" id="checkoutAmount" value="<?php echo $checkoutAmount ?>">
@@ -157,10 +155,8 @@ if (isset($_GET['update_status']) && $_GET['update_status'] === 'true') {
     document.getElementById("myForm").addEventListener("submit", function (event) {
         // Get all radio buttons with the "radio-group" class
         var radioButtons = document.getElementsByClassName("shipaddress");
-
         // Initialize a variable to keep track of whether any radio button is selected
         var atLeastOneSelected = false;
-
         // Loop through radio buttons to check if at least one is selected
         for (var i = 0; i < radioButtons.length; i++) {
             if (radioButtons[i].checked) {
@@ -168,7 +164,6 @@ if (isset($_GET['update_status']) && $_GET['update_status'] === 'true') {
                 break; // Exit the loop if one is selected
             }
         }
-
         // If none are selected, prevent form submission and show an error message
         if (!atLeastOneSelected) {
             event.preventDefault(); // Prevent form submission
@@ -176,62 +171,27 @@ if (isset($_GET['update_status']) && $_GET['update_status'] === 'true') {
         }
     });
 
-
-    function applyCoupon() {
-        // Get the coupon code entered by the user
-        var couponCode = document.getElementById('couponCode').value;
-
-        // Use AJAX to send the coupon code to the server for validation and get the response
-        $.ajax({
-            type: 'POST',
-            url: 'orderpage.php',
-            data: { couponCode: couponCode },
-            dataType: 'json',
-            success: function (response) {
-                if (response.error) {
-                    // Handle case where the entered coupon code is not valid
-                    alert(response.error);
-                } else {
-                    // Update the checkout amount display with the new amount
-                    var checkoutAmountElement = document.getElementById('checkoutAmount');
-                    checkoutAmountElement.innerHTML = '&#8377;' + response.newCheckoutAmount;
-
-                    // Update the hidden input value if you need to submit it with the form
-                    document.getElementById('checkoutAmountInput').value = response.newCheckoutAmount;
-                }
-            },
-            error: function (error) {
-                // Handle AJAX error
-                console.log(error);
-            }
-        });
-    }
 </script>
 <?php 
-    $enteredCouponCode = isset($_POST['couponCode']) ? $_POST['couponCode'] : '';
-$couponQuery = "SELECT coupon_value FROM tbl_coupon WHERE coupon_code = '$enteredCouponCode'";
-$couponResult = $conn->query($couponQuery);
-
-if ($couponResult->num_rows > 0) {
-    $couponData = $couponResult->fetch_assoc();
-    $couponValue = $couponData['coupon_value'];
-    $newCheckoutAmount = $totalAmount - $couponValue;
-    $response['newCheckoutAmount'] = $newCheckoutAmount;
-    //echo $couponValue;
-    echo json_encode($response);
-
-
-
-} else {
-    $response['error'] = 'Invalid coupon code';
-    echo json_encode($response);
-}
-
-
+// if(isset($_POST['coupon-apply'])){
+//     $selectedAddressID = $_POST['shipaddress'];
+//     $newCheckoutAmount= $_POST['checkoutAmount'];
+//     $coupon_id=$_POST['couponCode'];
+//     $fetch_coupon="SELECT * FROM tbl_coupon where coupon_code='$coupon_id'";
+//     $fetch_coupon_details=$conn->query($fetch_coupon);
+//     while ($row = mysqli_fetch_assoc($fetch_coupon_details)) 
+//     {
+//         $couponId=$row['coupon_id'];
+//         $newCheckoutAmount=$_POST['checkoutAmount']-$row['coupon_value'];
+//         $insertQuery = "INSERT INTO tbl_price (user_id,total_amount,checkout_amount,address_id, coupon_id) VALUES ($id,  $totalAmount,$newCheckoutAmount,$selectedAddressID,$couponId)";
+//         $conn->query($insertQuery);
+//        }
+    
+// }
 if (isset($_POST['pay'])) {
   $selectedAddressID = $_POST['shipaddress'];
   $newCheckoutAmount= $_POST['checkoutAmount'];
-  $insertQuery = "INSERT INTO tbl_price (user_id,total_amount,checkout_amount, address_id) VALUES ($id,  $totalAmount,$checkoutAmount,$selectedAddressID)";
+  $insertQuery = "INSERT INTO tbl_price (user_id,total_amount,checkout_amount,address_id) VALUES ($id,  $totalAmount,$checkoutAmount,$selectedAddressID)";
   
   if ($conn->query($insertQuery)) {
       echo '<script>
@@ -242,8 +202,6 @@ if (isset($_POST['pay'])) {
       echo "Error: " . $conn->error;
   }
 }
-
-
 ?>
 </body>
 </html>
