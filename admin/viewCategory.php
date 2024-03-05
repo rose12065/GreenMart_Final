@@ -11,7 +11,7 @@
     }
     
     $sql_orderTotal="SELECT COUNT(*) as total_orders
-    FROM tbl_order WHERE delivery_status=0";
+    FROM tbl_order WHERE delivery_status NOT IN ('Shipped','Ordered')";
     $total_orderCount = $conn->query($sql_orderTotal);
     while($row=mysqli_fetch_assoc($total_orderCount)){
         $totalOrder=$row['total_orders'];
@@ -262,6 +262,7 @@
     </tr>
   </thead>
   <?php
+  $serialNumber=1;
         while($row=mysqli_fetch_assoc($all_category)){
                                                    
                                                     
@@ -269,10 +270,10 @@
 ?>
   <tbody>
     <tr>
-      <th scope="row"><?php echo $row['category_id'] ?></th>
+      <th scope="row"><?php echo $serialNumber ?></th>
       <td><?php echo $row['category_name'] ?></td>
       <td>
-        <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark">
+        <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark" onclick="return confirm('Are you sure?')"">
         <a href="deleteCategory.php ? category_id=<?php echo $row['category_id'] ?>" > <i class="fa fa-times" aria-hidden="true"></i></a>
         </button>
         <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark">
@@ -283,7 +284,7 @@
     
   </tbody>
   <?php
-
+$serialNumber++;
         }
         ?>
 </table>

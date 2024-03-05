@@ -11,7 +11,7 @@
     }
     
     $sql_orderTotal="SELECT COUNT(*) as total_orders
-    FROM tbl_order WHERE delivery_status=0";
+    FROM tbl_order WHERE delivery_status NOT IN ('Shipped','Ordered')";
     $total_orderCount = $conn->query($sql_orderTotal);
     while($row=mysqli_fetch_assoc($total_orderCount)){
         $totalOrder=$row['total_orders'];
@@ -25,10 +25,21 @@
     }
 
     if(isset($_POST['edit_cat'])){
-        $new_category_name=$_POST['category'];
+        $new_cat_name=$_POST['category'];
+        $sql_category="SELECT * FROM tbl_category WHERE category_name= '$new_cat_name'";
+        $catCheckResult = mysqli_query($conn,  $sql_category);
+        if (mysqli_num_rows($catCheckResult) > 0) {  
+            
+            echo"<script>
+            alert('The category already exsit');
+            window.location.href='viewCategory.php';</script>";  
+            exit();
+        }
         $sql_update="UPDATE tbl_category SET category_name='$new_category_name' WHERE category_id='$categoryId'";
         if ($conn->query($sql_update) === TRUE) {
-            echo"<script>window.location.href='viewCategory.php';</script>";
+
+            echo"alert('The category edited succesfully');
+            <script>window.location.href='viewCategory.php';</script>";
             
         } else {
             echo "Error: " . $conn->error;

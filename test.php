@@ -1,96 +1,113 @@
-<?php 
-	
-// Checking valid form is submit or not 
-if (isset($_POST['submit_btn'])) { 
-	
-	// Storing name in $name variable 
-	$name = $_POST['name']; 
-	
-	// Storing google recaptcha response 
-	// in $recaptcha variable 
-	$recaptcha = $_POST['g-recaptcha-response']; 
-} 
-?>
- 
-<!DOCTYPE html> 
-<html lang="en"> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-12 col-lg-6">
+            <div class="mb-3 card">
+                <div class="card-header-tab card-header-tab-animation card-header">
+                    <div class="card-header-title">
+                        <i class="header-icon lnr-apartment icon-gradient bg-love-kiss"></i>
+                        Sales Report
+                    </div>
+                    <ul class="nav">
+                        <li class="nav-item"><a href="javascript:void(0);" class="active nav-link">Last</a></li>
+                        <li class="nav-item"><a href="javascript:void(0);" class="nav-link second-tab-toggle">Current</a></li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tabs-eg-77">
+                            <div class="card mb-3 widget-chart widget-chart2 text-left w-100">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-wrapper widget-chart-wrapper-lg opacity-10 m-0">
+                                        <canvas id="salesChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<head> 
-	<meta charset="UTF-8"> 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
-	<meta name="viewport" content= 
-		"width=device-width, initial-scale=1.0"> 
+    <?php
+    require('connection.php');
+    
+    // Check connection
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    
+    $sql = "SELECT order_date FROM tbl_order";
+    $result = mysqli_query($conn, $sql);
+    
+    // Initialize monthly sales array
+    $monthlySalesData = array();
+    
+    // Process the fetched data
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Extract order date
+            $orderDate = $row['order_date'];
+    
+            // Extract month and year from order date
+            $monthYear = date('F Y', strtotime($orderDate));
+    
+            // Check if the month/year already exists in the monthly sales array
+            if (array_key_exists($monthYear, $monthlySalesData)) {
+                // Increment the count for the existing month/year
+                $monthlySalesData[$monthYear]++;
+            } else {
+                // Add a new entry for the month/year
+                $monthlySalesData[$monthYear] = 1;
+            }
+        }
+    }
+    
+    // Close the database connection
+    mysqli_close($conn);
+    
+    // Print the monthly sales array
+    //print_r($monthlySalesData);
+    ?>
 
-	<style>
-    .container { 
-	border: 1px solid rgb(73, 72, 72); 
-	border-radius: 10px; 
-	margin: auto; 
-	padding: 10px; 
-	text-align: center; 
-} 
-	
-h1 { 
-	margin-top: 10px; 
-} 
-	
-input[type="text"] { 
-	padding: 10px; 
-	border-radius: 5px; 
-	margin: 10px; 
-	font-family: "Times New Roman", Times, serif; 
-	font-size: larger; 
-} 
-	
-button { 
-	border-radius: 5px; 
-	padding: 10px; 
-	color: #fff; 
-	background-color: #167deb; 
-	border-color: #0062cc; 
-	font-weight: bolder; 
-	cursor: pointer; 
-} 
-	
-button:hover { 
-	text-decoration: none; 
-	background-color: #0069d9; 
-	border-color: #0062cc; 
-} 
-	
-.g-recaptcha { 
-	margin-left: 513px; 
-}
+    <script>
+        // Sales data from PHP
+        var salesData = <?php echo json_encode($monthlySalesData); ?>;
 
-  </style>
+        // Extract labels and values from PHP data
+        var labels = Object.keys(salesData);
+        var values = Object.values(salesData);
 
-	<!-- Google reCAPTCHA CDN -->
-	<script src= 
-		"https://www.google.com/recaptcha/api.js" async defer> 
-	</script> 
-</head> 
-
-<body> 
-	<div class="container"> 
-		<h1>Google reCAPTCHA</h1> 
-
-		<!-- HTML Form -->
-		<form action="action.php" method="post"> 
-			<input type="text" name="name" id="name"
-				placeholder="Enter Name" required> 
-			<br> 
-
-			<!-- div to show reCAPTCHA -->
-			<div class="g-recaptcha"
-				data-sitekey="6LcydIEpAAAAALNKpANcMhRaMUIfqSBt-0NE8xk4"> 
-			</div> 
-			<br> 
-
-			<button type="submit" name="submit_btn"> 
-				Submit 
-			</button> 
-		</form> 
-	</div> 
-</body> 
-
+        // Chart.js configuration
+        var ctx = document.getElementById('salesChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sales Report',
+                    data: values,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
 </html>

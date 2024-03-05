@@ -31,8 +31,9 @@
                     <th>Product</th>
                     <th>Date</th>
                     <th>Total Amount</th>
-                    <th>Action</th>
+                    <th>Status</th>
                     <th>Bill</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -42,6 +43,7 @@
 
 while ($row = mysqli_fetch_assoc($all_product)) {
 ?>
+
                 <tr>
                     <td><?php echo $row['order_id']; ?></td>
                     <td><?php echo $row['product_names']; ?></td>
@@ -66,6 +68,9 @@ while ($row = mysqli_fetch_assoc($all_product)) {
                 ?>     
                     <td>
                        <a href="BillPdf.php ?  order_id=<?php echo $row['order_id'] ?>"><i class="fa fa-print"></i></a>
+                    </td>
+                    <td>
+                    <a href="SingleOrderDetails.php ?order_id=<?php echo $row['order_id'] ?> "><span class="badge badge-info">More Info</span></a>
                     </td>
                 </tr>
                               <?php

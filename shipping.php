@@ -124,7 +124,7 @@ require('navbar.php');
                     <input type="text" class="form-control" id="uname" name="uname" onkeyup="validateName()" required>
                     <span id="lblErrorName" style="color: red"></span>
                 </div>
-
+ 
                 <!-- Email -->
                 <div class="form-group">
                     <label for="email">Email:</label>

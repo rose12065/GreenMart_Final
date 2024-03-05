@@ -23,18 +23,21 @@ $all_cart = $conn->query($fetch_cart);
 // Iterate through cart items
 while ($row = mysqli_fetch_assoc($all_cart)) {
     $productId = $row['product_id'];
-    $quantity = $row['quantity'];
+    $newquantity = $row['quantity'];
     $unitPrice = $row['unit_price'];
-    $total = $quantity * $unitPrice;
+    $total = $newquantity * $unitPrice;
 
     // Insert order details into tbl_order
     $order_query = "INSERT INTO tbl_order(order_id, user_id, product_id,price_id, quantity, unit_price ,order_date,delivery_status)
-                    VALUES ('$commonOrderId', '$id', '$productId','$priceId', '$quantity', '$unitPrice', '$date','Ordered')";
+                    VALUES ('$commonOrderId', '$id', '$productId','$priceId', '$newquantity', '$unitPrice', '$date','Ordered')";
     
     if ($conn->query($order_query)) {
         // Remove the product from the cart
         $remove_cart = "DELETE FROM tbl_cart_items WHERE user_id = $id AND product_id = $productId";
         $conn->query($remove_cart);
+
+        $update_quantity="UPDATE tbl_product SET stock= stock-$newquantity where product_id = $productId";
+        $conn->query($update_quantity);
     }
 }
 

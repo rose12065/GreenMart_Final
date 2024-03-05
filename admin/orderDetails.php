@@ -11,16 +11,27 @@
     }
 
 
-    $sql_order="SELECT O.*, -- All columns from tbl_order
-    P.product_name -- Product name from tbl_product
-    FROM
-    tbl_order AS O
-    INNER JOIN
-    tbl_product AS P ON O.product_id = P.product_id";
+    $sql_order = "SELECT 
+                O.*, 
+                GROUP_CONCAT(P.product_name SEPARATOR ', ') AS product_names,
+                CASE 
+                    WHEN O.delivery_status = 'Delivered' THEN 3
+                    WHEN O.delivery_status = 'Shipped' THEN 2
+                    ELSE 1
+                END AS delivery_priority
+            FROM
+                tbl_order AS O
+            INNER JOIN
+                tbl_product AS P ON O.product_id = P.product_id
+            GROUP BY 
+                O.order_id, delivery_priority
+            ORDER BY 
+                delivery_priority";
+
     $total_order = $conn->query($sql_order);
     
     $sql_orderTotal="SELECT COUNT(*) as total_orders
-    FROM tbl_order WHERE delivery_status=0";
+    FROM tbl_order WHERE delivery_status NOT IN ('Shipped','Ordered')";
     $total_orderCount = $conn->query($sql_orderTotal);
     while($row=mysqli_fetch_assoc($total_orderCount)){
         $totalOrder=$row['total_orders'];
@@ -334,7 +345,6 @@
                                 <th>Product Name</th>
                                 <th>Order Date</th>
                                 <th>status</th>
-                                <th>Actions</th>
                                 </tr>
                             </thead>
                             <?php
@@ -356,7 +366,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <p class="fw-normal mb-1"><?php echo $row['product_name'];  ?></p>
+                                        <p class="fw-normal mb-1"><?php echo $row['product_names'];  ?></p>
                                         <p class="text-muted mb-0"></p>
                                     </td>
                                     <td>
@@ -364,20 +374,18 @@
                                     </td>
                                     <td>
                                                         <?php
-                                                            if ($status==1){
+                                                            if ($status=='Delivered'){
                                                                     echo '<span class="badge badge-success rounded-pill d-inline">Delivered</span>';
                                                             }
+                                                            else if($status=='Shipped'){
+                                                                echo '<span class="badge badge-info rounded-pill d-inline">Shipped</span>';
+                                                            }
                                                             else{
-                                                                echo '<span class="badge badge-warning rounded-pill d-inline">Not Delivered</span>';
+                                                                echo '<span class="badge badge-warning rounded-pill d-inline">Ordered</span>';
                                                             }
                                                         ?>
                                     
                                         
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-link btn-sm btn-rounded">
-                                        More Info
-                                        </button>
                                     </td>
                                     </tr>
                                     <?php

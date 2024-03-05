@@ -11,7 +11,7 @@
     }
     
     $sql_orderTotal="SELECT COUNT(*) as total_orders
-    FROM tbl_order WHERE delivery_status=0";
+    FROM tbl_order WHERE delivery_status NOT IN ('Shipped','Ordered')";
     $total_orderCount = $conn->query($sql_orderTotal);
     while($row=mysqli_fetch_assoc($total_orderCount)){
         $totalOrder=$row['total_orders'];
@@ -267,6 +267,7 @@
     </tr>
   </thead>
   <?php
+$serialNumber = 1; 
 while ($row = mysqli_fetch_assoc($all_seller)) {
 $sellerId=$row['seller_id'];
 $sellerName=$row['seller_name'];
@@ -281,7 +282,7 @@ $status=$row['status'];
         <div class="d-flex align-items-center">
 
 <div class="ms-3">
-  <p class="fw-bold mb-1"><?php echo $sellerId; ?></p>
+  <p class="fw-bold mb-1"><?php echo $serialNumber; ?></p>
 </div>
 </div>
         </td>
@@ -331,6 +332,7 @@ if($status==2){
     </tr>
 
     <?php
+    $serialNumber++;
 }
 ?>  
   </tbody>
