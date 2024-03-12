@@ -332,7 +332,7 @@
             $phone=$_POST['phone'];
             $pwd = $_POST['pwd'];
 
-            $emailCheckQuery = "SELECT * FROM tbl_user_register WHERE user_email='$email'";
+            $emailCheckQuery = "SELECT * FROM tbl_role WHERE email='$email' and role='seller'";
             $emailCheckResult = mysqli_query($con, $emailCheckQuery);
             
             if (mysqli_num_rows($emailCheckResult) > 0) {
@@ -340,23 +340,28 @@
                 exit();
             }
             $query="INSERT INTO tbl_role(email, password,  role)  values('$email','$pwd','seller')";
-            if(mysqli_query($con,$query)){
-            $sql="INSERT INTO tbl_seller_register(seller_name , company, seller_mobile,seller_email, seller_password)  values('$name','$company',$phone,'$email','$pwd')";
-            if(mysqli_query($con,$sql))
-            {?>
-              <script>
-              if(window.confirm('REgistration succsesful'))
-              {
-              window.location.href='login.php';
-              header("Location: login.php");
-              };
-            </script><?php
-            }
-            
-            else{
-                echo"Error";
-            }
-           }
+             if(mysqli_query($con,$query)){
+                $sqlselect="SELECT role_id FROM tbl_role";
+                $selectResult=mysqli_query($con,$sqlselect);
+                while($row=mysqli_fetch_assoc($selectResult)) {
+                    $role_id=$row['role_id'];
+                }
+
+                 $sql="INSERT INTO tbl_seller_register(role_id,seller_name,seller_mobile,company,status)  values('$role_id','$name',$phone,'$company',0)";
+                 if(mysqli_query($con,$sql))
+                 {?>
+                  <script>
+                  if(window.confirm('Registration succsesful'))
+                   {
+                   window.location.href='login.php';
+                   header("Location: login.php");
+                   };
+                 </script><?php
+                 }
+                }
+                 else{
+                     echo"Error";
+                 }
         }
            mysqli_close($con); 
         

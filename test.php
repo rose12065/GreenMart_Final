@@ -1,113 +1,204 @@
+<?php
+require('../connection.php');
+$sellerId=$_SESSION['sellerid'];
+$sql = "SELECT * FROM tbl_product where seller_id=$sellerId and status=1";
+  $all_product=$conn->query($sql);
+  
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Report</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Vendor Dashboard</title>
+    <!-- Add Bootstrap CSS link here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add Font Awesome CSS for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        /* Add your custom styles here */
+        body {
+            background-color: #ffffff;
+        }
+        .sidebar {
+            background-color: #ffffff;
+            color: white;
+        }
+        .navbar {
+            background-color: #090909;
+        }
+        .nav-link {
+            color: rgb(13, 12, 12);
+        }
+        .nav-link:hover {
+            color: #484744;
+        }
+        .active {
+            background-color: #eceae6;
+        }
+        .navbar-brand {
+            color: rgba(50, 47, 47, 0.518);
+        }
+        main {
+            background-color: rgb(226, 222, 222);
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div class="row">
-        <div class="col-md-12 col-lg-6">
-            <div class="mb-3 card">
-                <div class="card-header-tab card-header-tab-animation card-header">
-                    <div class="card-header-title">
-                        <i class="header-icon lnr-apartment icon-gradient bg-love-kiss"></i>
-                        Sales Report
-                    </div>
-                    <ul class="nav">
-                        <li class="nav-item"><a href="javascript:void(0);" class="active nav-link">Last</a></li>
-                        <li class="nav-item"><a href="javascript:void(0);" class="nav-link second-tab-toggle">Current</a></li>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#"><i class="fas fa-store"></i> Vendor Dashboard</a>
+        <!-- Add your profile, add product, and logout buttons here -->
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link " href="sellerdashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="addproduct.php"><i class="fas fa-box"></i> Add Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="addedproducts.php"><i class="fas fa-list"></i> List Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../logout.php"><i class="fas fa-person"></i> Logout</a>
+                        </li>
                     </ul>
                 </div>
-                <div class="card-body">
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="tabs-eg-77">
-                            <div class="card mb-3 widget-chart widget-chart2 text-left w-100">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-wrapper widget-chart-wrapper-lg opacity-10 m-0">
-                                        <canvas id="salesChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <h1>Added Products</h1>
+                <table class="table align-middle mb-0 bg-white">
+  <thead class="bg-light">
+    <tr>
+      <th>Product Name</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>unit price</th>
+      <th>Stock</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <?php
+while ($row = mysqli_fetch_assoc($all_product)) {
+  $productId=$row['product_id'];
+  $productName=$row['product_name'];
+  $price=$row['unit_price'];
+  $productDiscription=$row['product_discription'];
+  $productImage=$row['product_image'];
+  $stock=$row['stock'];
+?>
+  <tbody>
+    <tr>
+      <td>
+        <div class="d-flex align-items-center">
+        <?php  echo '<img  src="data:images/jpeg;base64,'.base64_encode($row['product_image']).'" alt=""
+              style="width: 45px; height: 45px"
+              class="rounded-circle"/>';?>
+          <div class="ms-3">
+            <p class="fw-bold mb-1"><?php echo $productName; ?></p>
+          </div>
+        </div>
+      </td>
+      <td>
+        <p class="fw-normal mb-1"><?php echo $productDiscription; ?></p>
+      </td>
+      <td>
+    <?php
+    if ($stock <= 0) {
+        echo '<span class="badge badge-danger rounded-pill d-inline">Out of Stock</span>';
+    } elseif ($stock <= 10) {
+        echo '<span class="badge badge-warning rounded-pill d-inline">Low Stock</span>';
+    } elseif ($stock >= 50) {
+        echo '<span class="badge badge-success rounded-pill d-inline">High Stock</span>';
+    } else {
+        echo '<span class="badge badge-info rounded-pill d-inline">Medium Stock</span>';
+    }
+    ?>
+</td>
+      <td><?php echo $price; ?></td>
+      <td>
+        <button type="button" class="btn btn-link btn-sm btn-rounded">
+        <?php echo $stock; ?>
+        </button>
+      </td>
+      <form action="" method="post">
+
+      <td>
+        <a href="edit-added-product.php ? product_id=<?php echo $productId ?>">
+        <button type="button" class="btn btn-sm btn-rounded" name="edit">
+          Edit 
+        </button>
+        </a>
+
+      </td>
+      <td>
+        <a href="delete-added-product.php ? product_id=<?php echo $productId ?>">
+        <button type="button" class="btn btn-sm btn-rounded" name="delete">
+          Remove 
+        </button>
+        </a>
+
+      </td>
+      </form>
+    </tr>
+
+    <?php
+}
+?>  
+  </tbody>
+</table>
+            </main>
         </div>
     </div>
 
-    <?php
-    require('connection.php');
-    
-    // Check connection
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
-    
-    $sql = "SELECT order_date FROM tbl_order";
-    $result = mysqli_query($conn, $sql);
-    
-    // Initialize monthly sales array
-    $monthlySalesData = array();
-    
-    // Process the fetched data
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            // Extract order date
-            $orderDate = $row['order_date'];
-    
-            // Extract month and year from order date
-            $monthYear = date('F Y', strtotime($orderDate));
-    
-            // Check if the month/year already exists in the monthly sales array
-            if (array_key_exists($monthYear, $monthlySalesData)) {
-                // Increment the count for the existing month/year
-                $monthlySalesData[$monthYear]++;
-            } else {
-                // Add a new entry for the month/year
-                $monthlySalesData[$monthYear] = 1;
-            }
-        }
-    }
-    
-    // Close the database connection
-    mysqli_close($conn);
-    
-    // Print the monthly sales array
-    //print_r($monthlySalesData);
-    ?>
+    <!-- Bootstrap JS and Popper.js (required for Bootstrap) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
 
-    <script>
-        // Sales data from PHP
-        var salesData = <?php echo json_encode($monthlySalesData); ?>;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Added Products
+    </title>
+    <!-- Font Awesome -->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"
+/>
+<!-- Google Fonts -->
+<link
+  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+  rel="stylesheet"
+/>
+<!-- MDB -->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css"
+  rel="stylesheet"
+/>
+<!-- MDB -->
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"
+></script>
+</head>
+<body>
 
-        // Extract labels and values from PHP data
-        var labels = Object.keys(salesData);
-        var values = Object.values(salesData);
-
-        // Chart.js configuration
-        var ctx = document.getElementById('salesChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Sales Report',
-                    data: values,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 </html>

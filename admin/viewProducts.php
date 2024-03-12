@@ -17,7 +17,7 @@
         $totalOrder=$row['total_orders'];
     }
 
-    $sql_pdt="SELECT * FROM tbl_product where status=1";
+    $sql_pdt="SELECT * FROM tbl_product where status=0";
     $all_pdt = $conn->query($sql_pdt);
 
 ?>
@@ -254,7 +254,10 @@
                         </div>
                     <div class="row">
                     <main class="col-md-9 ms-sm-auto col-lg-10 ">
+                        
                 <h1>Added Products</h1>
+
+               
                 <table class="table align-middle mb-0 bg-white " style="width: 120%;">
   <thead class="bg-light">
     <tr>
@@ -312,8 +315,8 @@ while ($row = mysqli_fetch_assoc($all_pdt)) {
       <form action="" method="post">
 
       <td>
-      <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark">
-        <a href="deleteProduct.php ? product_id=<?php echo $row['product_id'] ?>" > <i class="fa fa-times" aria-hidden="true"></i></a>
+      <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark" onclick="confirmDelete(<?php echo $row['product_id']; ?>)">
+         <i class="fa fa-times" aria-hidden="true"></i>
         </button>
         
       </td>
@@ -380,5 +383,12 @@ while ($row = mysqli_fetch_assoc($all_pdt)) {
                 <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
         </div>
     </div>
+    <script>
+    function confirmDelete(productId) {
+        if (confirm("Are you sure you want to delete this product?")) {
+            window.location.href = "deleteProduct.php?product_id=" + productId;
+        }
+    }
+</script>
 <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-free/assets/scripts/main.js"></script></body>
 </html>

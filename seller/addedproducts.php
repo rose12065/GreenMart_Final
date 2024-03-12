@@ -1,85 +1,215 @@
 <?php
-require('../connection.php');
+    require('../connection.php');
+    //session_start();
+    $seller=$_SESSION['sellerid'];
+    $sql="SELECT s.*, r.email AS role_email
+    FROM tbl_seller_register s
+    JOIN tbl_role r ON s.role_id = r.role_id
+    WHERE s.role_id = $seller";
+    $all_seller = $conn->query($sql);
+    while ($row = mysqli_fetch_assoc($all_seller)){
+        $sellerName=$row['seller_name'];
+        $sellerMobile=$row['seller_mobile'];
+        $sellerEmail=$row['role_email'];
+        $company=$row['company'];
+    }
+    
+$sql="SELECT * FROM tbl_category";
+        $all_cat = $conn->query($sql);
+
 $sellerId=$_SESSION['sellerid'];
-$sql = "SELECT * FROM tbl_product where seller_id=$sellerId and status=1";
+$sql = "SELECT * FROM tbl_product where seller_id=$sellerId and status=0";
   $all_product=$conn->query($sql);
-  
-?>
-<!DOCTYPE html>
+
+    ?>
+ 
+
+<!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Vendor Dashboard</title>
-    <!-- Add Bootstrap CSS link here -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Add Font Awesome CSS for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <style>
-        /* Add your custom styles here */
-        body {
-            background-color: #ffffff;
-        }
-        .sidebar {
-            background-color: #ffffff;
-            color: white;
-        }
-        .navbar {
-            background-color: #090909;
-        }
-        .nav-link {
-            color: rgb(13, 12, 12);
-        }
-        .nav-link:hover {
-            color: #484744;
-        }
-        .active {
-            background-color: #eceae6;
-        }
-        .navbar-brand {
-            color: rgba(50, 47, 47, 0.518);
-        }
-        main {
-            background-color: rgb(226, 222, 222);
-            padding: 20px;
-            border-radius: 10px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <meta name="description" content="This is an example dashboard created using build-in elements and components.">
+    <meta name="msapplication-tap-highlight" content="no">
+<link href="https://demo.dashboardpack.com/architectui-html-free/main.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="path/to/pe-icon-7-stroke/css/pe-icon-7-stroke.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Optional - Adds useful class to manipulate icon font display -->
+<link rel="stylesheet" href="path/to/pe-icon-7-stroke/css/helper.css">
+<style>
+    .scrollbar-sidebar {
+    height: calc(100vh - 60px); /* Adjust the height as needed */
+    overflow-y: auto;
+}
+
+</style>
+</head>
+
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="#"><i class="fas fa-store"></i> Vendor Dashboard</a>
-        <!-- Add your profile, add product, and logout buttons here -->
-    </nav>
-
-    <!-- Sidebar -->
-    <div class="container-fluid">
-        <div class="row">
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block">
-                <div class="position-sticky">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link " href="sellerdashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" href="addproduct.php"><i class="fas fa-box"></i> Add Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="addedproducts.php"><i class="fas fa-list"></i> List Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../logout.php"><i class="fas fa-person"></i> Logout</a>
-                        </li>
-                    </ul>
+    <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
+        <div class="app-header header-shadow">
+            <div class="app-header__logo">
+                <!-- <div class="logo-src"></div> -->
+                <div class="header__pane ml-auto">
+                    <div>
+                        <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
-            </nav>
-
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            </div>
+            <div class="app-header__mobile-menu">
+                <div>
+                    <button type="button" class="hamburger hamburger--elastic mobile-toggle-nav">
+                        <span class="hamburger-box">
+                            <span class="hamburger-inner"></span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="app-header__menu">
+                <span>
+                    <button type="button" class="btn-icon btn-icon-only btn btn-primary btn-sm mobile-toggle-header-nav">
+                        <span class="btn-icon-wrapper">
+                            <i class="fa fa-ellipsis-v fa-w-6"></i>
+                        </span>
+                    </button>
+                </span>
+            </div>    <div class="app-header__content">
+                <div class="app-header-left">
+                    <div class="search-wrapper">
+                        <button class="close"></button>
+                    </div>
+                           </div>
+                <div class="app-header-right">
+                    <div class="header-btn-lg pr-0">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-wrapper">
+                                <div class="widget-content-left">
+                                    <div class="btn-group">
+                                        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="p-0 btn">
+                                            <!-- <img width="42" class="rounded-circle" src="" alt=""> -->
+                                           
+                                        </a>
+                                       
+                                    </div>
+                                </div>
+                                <div class="widget-content-left  ml-3 header-user-info">
+                                    <div class="widget-heading">
+                                       <?php echo $sellerName ; ?>
+                                    </div>
+                                    <div class="widget-subheading">
+                                        Seller
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>        </div>
+            </div>
+        </div>        <div class="ui-theme-settings">
+            <button type="button" id="TooltipDemo" class="btn-open-options btn btn-warning">
+                <i class="fa fa-cog fa-w-16 fa-spin fa-2x"></i>
+            </button>
+          
+        </div>        
+        <div class="app-main">
+                <div class="app-sidebar sidebar-shadow">
+                    <div class="app-header__logo">
+                        <div class="logo-src"></div>
+                        <div class="header__pane ml-auto">
+                            <div>
+                                <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
+                                    <span class="hamburger-box">
+                                        <span class="hamburger-inner"></span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="app-header__mobile-menu">
+                        <div>
+                            <button type="button" class="hamburger hamburger--elastic mobile-toggle-nav">
+                                <span class="hamburger-box">
+                                    <span class="hamburger-inner"></span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="app-header__menu">
+                        <span>
+                            <button type="button" class="btn-icon btn-icon-only btn btn-primary btn-sm mobile-toggle-header-nav">
+                                <span class="btn-icon-wrapper">
+                                    <i class="fa fa-ellipsis-v fa-w-6"></i>
+                                </span>
+                            </button>
+                        </span>
+                    </div>    
+                    <div class="scrollbar-sidebar">
+                        <div class="app-sidebar__inner">
+                            <ul class="vertical-nav-menu">
+                                <li class="app-sidebar__heading">Dashboard</li>
+                                <li>
+                                    <a href="sellerdashboard.php" class="mm-active">
+                                    <i class="fa fa-dashboard"></i>
+                                        Dashboard 
+                                    </a>
+                                </li>
+                                <li class="app-sidebar__heading">Products</li>
+                                <li>
+                                    <a href="addproduct.php">
+                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                        Add Products
+                                    </a>
+                                    <a href="addedproducts.php">
+                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                        View Products
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-success"></span>
+                                    </a>
+                                    <a href="productArchives.php">
+                                        <i class="metismenu-icon pe-7s-diamond"></i>
+                                        Archived Products
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-success"></span>
+                                    </a>
+                                </li>
+                                <li class="app-sidebar__heading">Reports</li>
+                                <li>
+                                    <a href="#">
+                                        <i class="metismenu-icon pe-7s-display2"></i>
+                                         Sales Report
+                                    </a>
+                                </li>
+                                
+                                <li class="app-sidebar__heading"><a href="../logout.php">LOGOUT</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>    
+                <div class="app-main__outer">
+                    
+                
+                    <div class="app-main__inner">
+                    <div class="row justify-content-end">
+    <div class="col-auto">
+        <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark">
+            <a href="productArchives.php"><span class="material-symbols-outlined">restore_from_trash</span> ARCHIVES</a>
+        </button>
+    </div>
+</div>
+                        <div class="row">
                 <h1>Added Products</h1>
-                <table class="table align-middle mb-0 bg-white">
+         
+                <table class="table align-middle bg-white">
   <thead class="bg-light">
     <tr>
       <th>Product Name</th>
@@ -137,18 +267,12 @@ while ($row = mysqli_fetch_assoc($all_product)) {
 
       <td>
         <a href="edit-added-product.php ? product_id=<?php echo $productId ?>">
-        <button type="button" class="btn btn-sm btn-rounded" name="edit">
-          Edit 
-        </button>
+             <span class="material-symbols-outlined">edit</span>&nbsp;&nbsp;&nbsp;&nbsp;
+       
         </a>
-
-      </td>
-      <td>
-        <a href="delete-added-product.php ? product_id=<?php echo $productId ?>">
-        <button type="button" class="btn btn-sm btn-rounded" name="delete">
-          Remove 
-        </button>
-        </a>
+        <a href="#" onclick="confirmDelete(<?php echo $productId ?>)">
+    <span class="material-symbols-outlined">close</span>
+</a>
 
       </td>
       </form>
@@ -159,46 +283,101 @@ while ($row = mysqli_fetch_assoc($all_product)) {
 ?>  
   </tbody>
 </table>
-            </main>
         </div>
     </div>
 
-    <!-- Bootstrap JS and Popper.js (required for Bootstrap) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+    </div>
+</div>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Added Products
-    </title>
-    <!-- Font Awesome -->
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-  rel="stylesheet"
-/>
-<!-- Google Fonts -->
-<link
-  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-  rel="stylesheet"
-/>
-<!-- MDB -->
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css"
-  rel="stylesheet"
-/>
-<!-- MDB -->
-<script
-  type="text/javascript"
-  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"
-></script>
-</head>
-<body>
+                    </div>        
+                    </div>
+                    <div class="app-wrapper-footer">
+                        <div class="app-footer">
+                            <div class="app-footer__inner">
+                                <div class="app-footer-left">
+                                    <ul class="nav">
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0);" class="nav-link">
+                                                Footer Link 1
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0);" class="nav-link">
+                                                Footer Link 2
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="app-footer-right">
+                                    <ul class="nav">
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0);" class="nav-link">
+                                                Footer Link 3
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0);" class="nav-link">
+                                                <div class="badge badge-success mr-1 ml-0">
+                                                    <small>NEW</small>
+                                                </div>
+                                                Footer Link 4
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    </div>
+                <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
+        </div>
+    </div>
+   <?php
+    if(isset($_POST['add_product'])){
+        $sellerId=$_SESSION['sellerid'];
+        $pdtname=$_POST['productName'];
+        $price=$_POST['unitPrice'];
+        $stock=$_POST['stock'];
+        $description=$_POST['description'];
+        $cat_id=$_POST['category'];
+        $imageData=addslashes(file_get_contents($_FILES['image']['tmp_name']));
+        
+        $product_name = $_POST["productName"];
 
+        $sql = "SELECT * FROM tbl_product WHERE product_name = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $product_name);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows > 0) {
+            echo "<script>alert(' Product name already exists.')
+            window.location.href='addedproducts.php';</script>'
+            </script> 
+            ";
+
+        } else {
+            $sql = "INSERT INTO tbl_product (product_name, unit_price, product_discription, category_id, seller_id,product_image,stock,status ) 
+            VALUES ('$pdtname', '$price', '$description', '$cat_id ', '$sellerId', '$imageData','$stock',1)";
+
+        if ($conn->query($sql) === TRUE) {
+            echo '<script>alert("Product inserted successfully")</script>';
+            
+        }
+        }
+    
+        $stmt->close();
+    }
+    mysqli_close($conn); 
+
+?>
+<script>
+    function confirmDelete(productId) {
+        if (confirm('Are you sure you want to delete this product?')) {
+            window.location.href = 'delete-added-product.php?product_id=' + productId;
+        }
+    }
+</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+<script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-free/assets/scripts/main.js"></script>
 </body>
 </html>

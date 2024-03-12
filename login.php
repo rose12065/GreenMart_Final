@@ -239,12 +239,14 @@ if(!isset($_SESSION['access_token']))
           }
         }
         elseif($role=='seller'){
-            $query = "SELECT * FROM tbl_seller_register WHERE seller_email='$email' AND seller_password='$password' and status=1";
+            $query = "SELECT s.* , r.* FROM tbl_seller_register s 
+            JOIN tbl_role r on s.role_id=r.role_id
+             WHERE r.email='$email' AND r.password='$password' and status=1";
             $find_user = mysqli_query($conn,$query);
             $result = mysqli_fetch_all($find_user,MYSQLI_ASSOC);
           if(count($result) > 0) {
               $_SESSION['name'] = $result[0]['seller_name']; // Access name from $result array
-              $_SESSION['sellerid'] = $result[0]['seller_id'];
+              $_SESSION['sellerid'] = $result[0]['role_id'];
               echo"<script>window.location.href='seller/sellerdashboard.php';</script>";
           }
           else{?>
@@ -277,7 +279,8 @@ if(!isset($_SESSION['access_token']))
 
          <?php }
         }
-        else{
+        elseif($role=='admin'){
+          echo'admin';
           $query = "SELECT * FROM tbl_admin_register WHERE admin_email='$email' AND admin_password='$password'";
           $find_user = mysqli_query($conn,$query);
           $result = mysqli_fetch_all($find_user,MYSQLI_ASSOC);
@@ -286,6 +289,9 @@ if(!isset($_SESSION['access_token']))
             $_SESSION['adminid'] = $result[0]['admin_id'];
             echo"<script>window.location.href='admin/admindashboard.php';</script>";
         }
+      }
+      else{
+        echo "No such user exsit";
       }
     }
     else {
