@@ -26,6 +26,7 @@ while ($row = mysqli_fetch_assoc($all_cart)) {
     $newquantity = $row['quantity'];
     $unitPrice = $row['unit_price'];
     $total = $newquantity * $unitPrice;
+    //echo $newquantity;
 
     // Insert order details into tbl_order
     $order_query = "INSERT INTO tbl_order(order_id, user_id, product_id,price_id, quantity, unit_price ,order_date,delivery_status)

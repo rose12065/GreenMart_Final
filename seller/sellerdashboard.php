@@ -176,7 +176,7 @@
                                 </li>
                                 <li class="app-sidebar__heading">Reports</li>
                                 <li>
-                                    <a href="#">
+                                    <a href="salesReport.php">
                                         <i class="metismenu-icon pe-7s-display2"></i>
                                          Sales Report
                                     </a>

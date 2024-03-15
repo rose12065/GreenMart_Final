@@ -179,7 +179,7 @@ $sql="SELECT * FROM tbl_category";
                                 </li>
                                 <li class="app-sidebar__heading">Reports</li>
                                 <li>
-                                    <a href="#">
+                                    <a href="salesReport.php">
                                         <i class="metismenu-icon pe-7s-display2"></i>
                                          Sales Report
                                     </a>
@@ -298,10 +298,11 @@ $sql="SELECT * FROM tbl_category";
 
         } else {
             $sql = "INSERT INTO tbl_product (product_name, unit_price, product_discription, category_id, seller_id,product_image,stock,status ) 
-            VALUES ('$pdtname', '$price', '$description', '$cat_id ', '$sellerId', '$imageData','$stock',1)";
+            VALUES ('$pdtname', '$price', '$description', '$cat_id ', '$sellerId', '$imageData','$stock',0)";
 
         if ($conn->query($sql) === TRUE) {
-            echo '<script>alert("Product inserted successfully")</script>';
+            echo '<script>alert("Product inserted successfully")
+            window.location.href="addedproducts.php";</script>';
             
         }
         }

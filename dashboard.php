@@ -219,6 +219,7 @@ if ($stock > 0) {
 ?>
 
                     </div>
+               
     <section class="py-1 overflow-hidden">
       <div class="container-fluid">
         <div class="row">
@@ -374,7 +375,7 @@ $image= $result[0]['product_image'];
               <?php
 $sql_brands = "SELECT DISTINCT s.company
 FROM tbl_seller_register s
-JOIN tbl_product p ON s.seller_id = p.seller_id";
+JOIN tbl_product p ON s.role_id = p.seller_id";
 $result_brands = $conn->query($sql_brands);
 
 // Check if there are brands
@@ -399,7 +400,7 @@ if ($result_brands->num_rows > 0) {
 
         // Build the SQL query to fetch filtered products
         $sql_filtered_products = "SELECT p.* FROM tbl_product p
-        INNER JOIN tbl_seller_register s ON p.seller_id = s.seller_id";
+        INNER JOIN tbl_seller_register s ON p.seller_id = s.role_id";
 
         if (!empty($selected_brands)) {
             $brand_conditions = implode("', '", $selected_brands);

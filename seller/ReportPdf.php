@@ -1,5 +1,21 @@
 <?php
 require_once('../tcpdf/tcpdf.php');
+require('../connection.php');
+$seller=$_SESSION['sellerid'];
+$sql="SELECT 
+p.product_id,
+p.product_name,
+SUM(o.quantity) AS total_quantity_sold,
+SUM(o.quantity * o.unit_price) AS total_revenue
+FROM 
+order_tbl o
+JOIN 
+product p ON o.product_id = p.product_id
+WHERE 
+p.seller_id = <seller_id>
+GROUP BY 
+p.product_id, p.product_name";
+
 $pdf = new TCPDF();
 $pdf->SetTitle('My PDF Document');
 $pdf->SetAuthor('John Doe');

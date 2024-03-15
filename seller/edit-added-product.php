@@ -188,7 +188,9 @@ $all_cat = $conn->query($sql);
                         `category_id`='$cat_id',`seller_id`='$sellerId',`stock`='$new_stock' WHERE product_id=$productId";
 
 if ($conn->query($sql) === TRUE) {
-    echo '<script>alert("Product updated successfully")</script>';
+    echo '<script>alert("Product updated successfully")
+    
+    </script>';
     
 } 
 

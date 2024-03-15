@@ -184,7 +184,7 @@ $sql = "SELECT * FROM tbl_product where seller_id=$sellerId and status=0";
                                 </li>
                                 <li class="app-sidebar__heading">Reports</li>
                                 <li>
-                                    <a href="#">
+                                    <a href="salesReport.php">
                                         <i class="metismenu-icon pe-7s-display2"></i>
                                          Sales Report
                                     </a>
@@ -246,11 +246,11 @@ while ($row = mysqli_fetch_assoc($all_product)) {
       </td>
       <td>
     <?php
-    if ($stock <= 0) {
+    if ($stock == 0) {
         echo '<span class="badge badge-danger rounded-pill d-inline">Out of Stock</span>';
     } elseif ($stock <= 10) {
         echo '<span class="badge badge-warning rounded-pill d-inline">Low Stock</span>';
-    } elseif ($stock >= 50) {
+    } elseif ($stock >= 100) {
         echo '<span class="badge badge-success rounded-pill d-inline">High Stock</span>';
     } else {
         echo '<span class="badge badge-info rounded-pill d-inline">Medium Stock</span>';
@@ -267,7 +267,7 @@ while ($row = mysqli_fetch_assoc($all_product)) {
 
       <td>
         <a href="edit-added-product.php ? product_id=<?php echo $productId ?>">
-             <span class="material-symbols-outlined">edit</span>&nbsp;&nbsp;&nbsp;&nbsp;
+             <span class="material-symbols-outlined">edit</span>&nbsp;&nbsp;
        
         </a>
         <a href="#" onclick="confirmDelete(<?php echo $productId ?>)">
@@ -361,6 +361,7 @@ while ($row = mysqli_fetch_assoc($all_product)) {
 
         if ($conn->query($sql) === TRUE) {
             echo '<script>alert("Product inserted successfully")</script>';
+           echo"<script> window.location.href = 'addedproducts.php' </script>";
             
         }
         }

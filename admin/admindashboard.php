@@ -11,8 +11,10 @@
     }
 
 
-    $sql_order="SELECT COUNT(*) as total_orders
-    FROM tbl_order WHERE delivery_status NOT IN ('Shipped','Ordered')";
+    $sql_order="SELECT COUNT(DISTINCT order_id) AS total_orders
+    FROM tbl_order
+    WHERE delivery_status IN ('Shipped', 'Ordered');
+    ";
     $total_order = $conn->query($sql_order);
     while($row=mysqli_fetch_assoc($total_order)){
         $totalOrder=$row['total_orders'];
