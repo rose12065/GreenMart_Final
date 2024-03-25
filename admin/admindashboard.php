@@ -256,7 +256,7 @@
                                 <li class="app-sidebar__heading">Shipping </li>
                                 <li>
                                     <a href="delivery.php">
-                                        <i class="metismenu-icon pe-7s-display2"></i>
+                                        <i class="metismenu-icon pe-7s-display2" id="delivery"></i>
                                          Delivery
                                     </a>
                                 </li>

@@ -2,10 +2,16 @@
 
 include 'connection.php';
 $userId = $_SESSION['id'];
-$category_select = "SELECT * FROM tbl_category ";
+$category_select = "SELECT * FROM tbl_category ORDER BY RAND() LIMIT 4";
 $all_cat = $conn->query($category_select);
 
-$pdt_recommed = " SELECT p.*, r.* FROM tbl_pdt_recommendation r join tbl_product p on p.product_id=r.product_id where user_id=$userId order by rec_id desc";
+$pdt_recommed = "SELECT DISTINCT p.product_id, p.* 
+FROM tbl_pdt_recommendation r 
+JOIN tbl_product p ON p.product_id = r.product_id 
+WHERE r.user_id = $userId 
+ORDER BY r.rec_id DESC 
+LIMIT 5;
+";
 $recommend_pdt = $conn->query($pdt_recommed);
 
 ?>
@@ -30,6 +36,7 @@ $recommend_pdt = $conn->query($pdt_recommed);
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
   </head>
 <body>
 
@@ -158,7 +165,7 @@ $(document).ready(function() {
             </div>
         </div>
 
-    </nav><br><br>
+    </nav>
 
     <div id="search-results"></div>
 
@@ -169,7 +176,7 @@ $(document).ready(function() {
                   <?php
 if (mysqli_num_rows($recommend_pdt) > 0) {
     ?>
-                <h3>Recommended Products</h3>
+                <h3 class="section-title">Recommended Products</h3>
 
 
                 <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
@@ -247,6 +254,9 @@ while ($row = mysqli_fetch_assoc($all_cat)) {
                 <?php
 }
 ?>
+        <a href="categoryList.php" class="nav-link category-item swiper-slide">
+          <h3 class="category-title"><span class="material-symbols-outlined">arrow_forward</span></h3>
+        </a>
               </div>
             </div>
 
@@ -597,8 +607,6 @@ if (isset($_POST['wishlist'])) {
 
 //   mysqli_close($conn);
 ?>
-
-
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Add your page content here -->
@@ -609,7 +617,6 @@ if (isset($_POST['wishlist'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     <script src="js/plugins.js"></script>
     <script src="js/script.js"></script>
-    <script src="js/myscripts.js"></script>
-
+    <!-- <script src="js/myscripts.js"></script> -->
 </body>
 </html>

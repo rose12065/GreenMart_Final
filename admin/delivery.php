@@ -294,7 +294,7 @@
 <form action="" method="post">
 <?php
 if ($row['status'] == 0) {
-  ?> <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark" onclick="return confirm('Are you sure?')">
+  ?> <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark" onclick="return confirm('Are you sure?')" id="approve_agent">
   <a href="approveagent.php ? agent_id=<?php echo $row['role_id'] ?>" > <span class="badge badge-danger rounded-pill d-inline"> Approve</span></a>
   </button>
    <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark">
@@ -302,7 +302,7 @@ if ($row['status'] == 0) {
   </button>
 <?php }
 elseif($row['status'] == 1){
-  ?><button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark">
+  ?><button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark" >
        <span class="badge badge-success rounded-pill d-inline"> Approved</span>
   </button>
 <?php }

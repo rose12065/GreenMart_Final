@@ -8,7 +8,7 @@ if (isset($_POST['search'])) {
     $searchQuery = $_POST['search'];
 
     // Construct SQL query to search for products
-    $sql = "SELECT * FROM tbl_product WHERE product_name LIKE '%$searchQuery%'";
+    $sql = "SELECT * FROM tbl_product WHERE product_name LIKE '%$searchQuery%' ";
 
     // Execute the query
     $result = mysqli_query($conn, $sql);
@@ -28,8 +28,10 @@ if (isset($_POST['search'])) {
         while ($row = mysqli_fetch_assoc($result)) {
             $stock=$row['stock'];
             $product_id=$row['product_id'];
-         $insert_query = "INSERT INTO tbl_pdt_recommendation (user_id, product_id) VALUES ('$user_id', '$product_id')";
-    mysqli_query($conn, $insert_query);
+            $insert_query = "INSERT INTO tbl_pdt_recommendation (user_id, product_id) 
+            VALUES ('$user_id', '$product_id') 
+            ON DUPLICATE KEY UPDATE product_id = '$product_id'";
+            mysqli_query($conn, $insert_query);
             ?>
 
             <div class="col">

@@ -29,7 +29,7 @@
             window.location.href='viewCategory.php';</script>";  
             exit();
         }
-        $query_insert="INSERT INTO tbl_category(category_name)VALUES(' $new_cat_name')";
+        $query_insert="INSERT INTO tbl_category(category_name,status)VALUES(' $new_cat_name',1)";
         if ($conn->query($query_insert) === TRUE) {
            // echo "<script>window.location.href='viewCategory.php';</scrtpt>";
             $success_message="Category Inserted successfully";
