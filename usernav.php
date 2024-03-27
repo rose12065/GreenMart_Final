@@ -39,6 +39,33 @@
                     
                 </ul>
             </div>
+            <div class="col-md-4 d-none d-md-block">
+                <select class="form-select border-0 bg-transparent" onchange="redirectToCategory(this)">
+    <option>All Categories</option>
+    <?php
+    
+$all_category_select = "SELECT * FROM tbl_category";
+$cat_select = $conn->query($all_category_select);
+    while ($row = mysqli_fetch_assoc($cat_select)) {
+        $cat = $row['category_id'];
+        $catName = $row['category_name'];
+    ?>
+    <option value="<?php echo $cat ?>"><?php echo $catName ?></option>
+    <?php
+    }
+    ?>
+</select>
+
+<script>
+    function redirectToCategory(select) {
+        var categoryId = select.value;
+        if (categoryId !== "") {
+            window.location.href = "product-categories.php?cat_id=" + categoryId;
+        }
+    }
+</script>
+
+              </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <div class="d-flex">
                 <ul class="navbar-nav">
                 <li class="nav-item">

@@ -206,7 +206,7 @@ small{
             
             <div class="col">
                 <p class="text-muted"> Order ID  <span class="font-weight-bold text-dark"><?php echo $orderId ?></span></p> 
-                <p class="text-muted"> Place On <span class="font-weight-bold text-dark"></span> </p></div>
+                <p class="text-muted">  <span class="font-weight-bold text-dark"></span> </p></div>
           </div>
           
         </div>

@@ -4,7 +4,7 @@ if (isset($_GET['order_id'])) {
     $orderId = $_GET['order_id'];
 
 $id = $_SESSION['id'];
-$sql = "UPDATE tbl_order SET status = 1 WHERE o_id = '$orderId'";
+$sql = "UPDATE tbl_order SET status = 1 , delivery_status='cancel' WHERE order_id = '$orderId'";
   if ($conn->query($sql) === TRUE) {
     // Item deleted successfully
     header('Location: cancelation.php'); // Redirect back to the cart page

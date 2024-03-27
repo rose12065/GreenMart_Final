@@ -211,7 +211,7 @@ if (isset($_POST['submit_review'])){
 }
        $s = "SELECT r.*, u.user_name
                 FROM tbl_review r
-                INNER JOIN tbl_user_register u ON r.user_id = u.user_id
+                INNER JOIN tbl_user_register u ON r.user_id = u.role_id
                 WHERE r.user_id = $userId AND r.product_id = $productId
                 ORDER BY r.review_date DESC";
                  

@@ -41,6 +41,7 @@ class ComposerStaticInit12adf952966b4618710720d6aae054b3
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
             'Psr\\Cache\\' => 10,
+            'Phpml\\' => 6,
             'ParagonIE\\ConstantTime\\' => 23,
         ),
         'M' => 
@@ -99,6 +100,10 @@ class ComposerStaticInit12adf952966b4618710720d6aae054b3
         'Psr\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
+        ),
+        'Phpml\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-ai/php-ml/src',
         ),
         'ParagonIE\\ConstantTime\\' => 
         array (

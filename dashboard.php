@@ -2,7 +2,7 @@
 
 include 'connection.php';
 $userId = $_SESSION['id'];
-$category_select = "SELECT * FROM tbl_category ORDER BY RAND() LIMIT 4";
+$category_select = "SELECT * FROM tbl_category ORDER BY RAND() LIMIT 5";
 $all_cat = $conn->query($category_select);
 
 $pdt_recommed = "SELECT DISTINCT p.product_id, p.* 
@@ -14,6 +14,9 @@ LIMIT 5;
 ";
 $recommend_pdt = $conn->query($pdt_recommed);
 
+
+$all_category_select = "SELECT * FROM tbl_category";
+$cat_select = $conn->query($all_category_select);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +40,9 @@ $recommend_pdt = $conn->query($pdt_recommed);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    
   </head>
+
 <body>
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -100,10 +105,35 @@ $recommend_pdt = $conn->query($pdt_recommed);
 
 
                 </ul>
+                <div class="col-md-4 d-none d-md-block">
+                <select class="form-select border-0 bg-transparent" onchange="redirectToCategory(this)">
+    <option>All Categories</option>
+    <?php
+    while ($row = mysqli_fetch_assoc($cat_select)) {
+        $cat = $row['category_id'];
+        $catName = $row['category_name'];
+    ?>
+    <option value="<?php echo $cat ?>"><?php echo $catName ?></option>
+    <?php
+    }
+    ?>
+</select>
+
+<script>
+    function redirectToCategory(select) {
+        var categoryId = select.value;
+        if (categoryId !== "") {
+            window.location.href = "product-categories.php?cat_id=" + categoryId;
+        }
+    }
+</script>
+
+              </div>
                 <form id="search-form" class="d-flex">
     <input type="text" id="search-input" placeholder="Search for products" class="form-control me-2">
     <button type="submit" class="btn btn-secondary" name="search">Search</button>
 </form>
+              
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -254,9 +284,6 @@ while ($row = mysqli_fetch_assoc($all_cat)) {
                 <?php
 }
 ?>
-        <a href="categoryList.php" class="nav-link category-item swiper-slide">
-          <h3 class="category-title"><span class="material-symbols-outlined">arrow_forward</span></h3>
-        </a>
               </div>
             </div>
 

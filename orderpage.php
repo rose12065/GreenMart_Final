@@ -112,14 +112,14 @@ if (isset($_GET['update_status']) && $_GET['update_status'] === 'true') {
                             </div>
                             <div class="rounded d-flex flex-column p-2 mt-3" style="background-color: #f8f9fa;">
                             <p class="customDemo"></p>
-                            <div class="border-top px-2 mx-2"></div>
-                            <div class="p-2 d-flex pt-3">
-                                <div class="col-8">
+                            <!-- <div class="border-top px-2 mx-2"></div>
+                            <div class="p-2 d-flex pt-3"> -->
+                                <!-- <div class="col-8">
                                     <input type="text" class="form-control" id="couponCode" name="couponCode" placeholder="Enter coupon code">
                                 </div>
                                 <div class="ms-auto">
                                     <button type="submit" class="btn btn-secondary" name="coupon-apply" onclick="applyCoupon()">Apply</button>
-                                </div>
+                                </div> -->
                             </div>
                             </div>  
                             <div class="border-top px-2 mx-2"></div>

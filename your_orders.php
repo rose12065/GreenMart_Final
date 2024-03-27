@@ -5,7 +5,7 @@
     $query="SELECT o.*, GROUP_CONCAT(p.product_name SEPARATOR ', ') AS product_names, pr.*
     FROM tbl_order o
     INNER JOIN tbl_product p ON o.product_id = p.product_id join tbl_price pr on o.price_id=pr.price_id
-    WHERE o.user_id = $id and o.status=0 Group by order_id order by o.order_date ";
+    WHERE o.user_id = $id and o.status=0 Group by order_id order by o.order_date desc";
 
     $all_product=$conn->query($query);
 ?>
@@ -60,18 +60,24 @@ while ($row = mysqli_fetch_assoc($all_product)) {
                         else if($row['delivery_status']=='Ordered'){
                             echo'<td><span class="badge badge-warning">Ordered</span></td>';
                         }
-                      else if($row['status']==0 and $row['delievry_status']=='shipped'){
-                            echo'<td>    
-                            <a href="cancelOrder.php?order_id=<?php echo $row["o_id"];?><span class="badge badge-warning">Cancel</span></a>
-                        </td>';
-                       } 
                 ?>     
                     <td>
                        <a href="BillPdf.php ?  order_id=<?php echo $row['order_id'] ?>"><i class="fa fa-print"></i></a>
                     </td>
                     <td>
                     <a href="SingleOrderDetails.php ?order_id=<?php echo $row['order_id'] ?> "><span class="badge badge-info">More Info</span></a>
-                    </td>
+                    <?php
+                            if($row['delivery_status']=='Delivered'){
+
+                            }
+                            else{
+                                ?>
+                                <a href="cancelOrder.php ?order_id=<?php echo $row["order_id"] ?>"><span class="badge badge-danger"> Cancel</span></a>
+                           
+                           <?php
+                            }
+                    ?>
+                </td>
                 </tr>
                               <?php
 }

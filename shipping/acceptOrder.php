@@ -20,7 +20,7 @@
         $sql_orders="SELECT o.*,a.*,u.*, count(o.order_id) AS order_count FROM tbl_order o 
         JOIN tbl_user_register u on u.role_id = o.user_id 
         JOIN tbl_address a on a.user_id = o.user_id 
-        WHERE o.delivery_status = 'Delivered' AND o.status = 0 
+        WHERE o.delivery_status = 'Shipped' AND o.status = 0 
         AND o.delivery_agent_id = $agentId 
         GROUP BY order_id";
         $result_orders = $conn->query($sql_orders);
@@ -188,8 +188,6 @@
                     <td class="text-center">
                     <div class="badge badge-success">DELIVERED</div>
                 </td>
-                    <button class="btn btn-success btn-sm" >Details</button>
-                    <button class="btn btn-danger btn-sm" disabled>Not Delivered</button>
                  </td>
                  <?php
                 }

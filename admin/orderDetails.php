@@ -382,8 +382,11 @@
                                                             else if($status=='Shipped'){
                                                                 echo '<span class="badge badge-info rounded-pill d-inline">Shipped</span>';
                                                             }
-                                                            else{
+                                                            else if ($status=='Ordered'){
                                                                 echo '<span class="badge badge-warning rounded-pill d-inline">Ordered</span>';
+                                                            }
+                                                            else{
+                                                                echo '<span class="badge badge-danger rounded-pill d-inline">Canceled</span>';
                                                             }
                                                         ?>
                                     
