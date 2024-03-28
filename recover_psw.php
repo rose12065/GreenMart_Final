@@ -65,15 +65,14 @@
 </main>
 </body>
 </html>
-
 <?php 
     if(isset($_POST["recover"])){
         include('connect/connection.php');
         $email = $_POST["email"];
 
-        $sql = mysqli_query($connect, "SELECT * FROM tbl_user_register WHERE user_email='$email'");
+        $sql = mysqli_query($connect, "SELECT * FROM tbl_role WHERE email='$email'");
         $query = mysqli_num_rows($sql);
-  	    $fetch = mysqli_fetch_assoc($sql);
+        $fetch = mysqli_fetch_assoc($sql);
 
         if(mysqli_num_rows($sql) <= 0){
             ?>
@@ -81,14 +80,7 @@
                 alert("<?php  echo "Sorry, no emails exists "?>");
             </script>
             <?php
-        }else if($fetch["status"] == 0){
-            ?>
-               <script>
-                   alert("Sorry, your account must verify first, before you recover your password !");
-                   window.location.replace("index.php");
-               </script>
-           <?php
-        }else{
+        } else {
             // generate token by binaryhexa 
             $token = bin2hex(random_bytes(50));
 
@@ -107,7 +99,7 @@
 
             // h-hotel account
             $mail->Username='rosemariaroy2024@mca.ajce.in';
-            $mail->Password='rose2562001';
+            $mail->Password='jkwi tfhk kxjh eewx';
 
             // send by h-hotel email
             $mail->setFrom('rosemariaroy2024@mca.ajce.in', 'Password Reset');
@@ -121,7 +113,7 @@
             $mail->Body="<b>Dear User</b>
             <h3>We received a request to reset your password.</h3>
             <p>Kindly click the below link to reset your password</p>
-            http://localhost/GreenMart/reset_psw.php
+            http://localhost/GreenMart_Final/reset_psw.php
             <br><br>
             <p>With regrads,</p>
             <b>GreenMart</b>";
@@ -141,6 +133,5 @@
             }
         }
     }
-
-
 ?>
+

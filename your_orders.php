@@ -72,7 +72,7 @@ while ($row = mysqli_fetch_assoc($all_product)) {
                             }
                             else{
                                 ?>
-                                <a href="cancelOrder.php ?order_id=<?php echo $row["order_id"] ?>"><span class="badge badge-danger"> Cancel</span></a>
+                                <a href="cancelOrder.php ?order_id=<?php echo $row["order_id"] ?>" onclick="return confirm('Are you sure?')"><span class="badge badge-danger"> Cancel</span></a>
                            
                            <?php
                             }

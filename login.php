@@ -35,6 +35,7 @@
 
 </head>
 <body>
+
     <div class="container mt-5" >
         <h2 class="mb-3 text-center">Login Form</h2>
          <div class="row">
@@ -293,9 +294,15 @@ if(!isset($_SESSION['access_token']))
         echo "No such user exsit";
       }
     }
-    else {
-        echo "Email or password incorrect";
+    else{
+      ?>
+<div class="alert alert-danger alert-dismissible w-50">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong>Can't Login!!</strong> Incorrect email or password.
+  </div>
+      <?php
     }
+  
     }
 
 

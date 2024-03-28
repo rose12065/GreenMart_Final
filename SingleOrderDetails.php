@@ -26,6 +26,7 @@ if(isset($_GET['order_id'])){
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
         body {
     letter-spacing: 0.8px;
@@ -205,6 +206,7 @@ small{
           <div class="row justify-content-between">
             
             <div class="col">
+                <a href="your_orders.php"><span class="material-symbols-outlined">arrow_back</span></a>
                 <p class="text-muted"> Order ID  <span class="font-weight-bold text-dark"><?php echo $orderId ?></span></p> 
                 <p class="text-muted">  <span class="font-weight-bold text-dark"></span> </p></div>
           </div>

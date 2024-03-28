@@ -55,6 +55,58 @@
     while($row=mysqli_fetch_assoc($total_profit)){
         $profit=$row['profit'];
     }
+
+    $sql_most_sold_pdt = "SELECT 
+    company,
+    COUNT(*) AS num_products_sold,
+    ROUND((COUNT(*) / total_products_sold) * 100, 2) AS percentage_of_total
+FROM (
+    SELECT 
+        s.company,
+        p.product_id,
+        COUNT(*) AS num_orders,
+        (SELECT COUNT(*) FROM tbl_order WHERE status = 0) AS total_products_sold
+    FROM 
+        tbl_order o
+    JOIN 
+        tbl_product p ON o.product_id = p.product_id
+    JOIN 
+        tbl_seller_register s ON p.seller_id = s.role_id
+    WHERE 
+        o.status = 0
+    GROUP BY 
+        s.company, p.product_id
+) AS subquery
+GROUP BY 
+    company
+ORDER BY 
+    percentage_of_total DESC
+LIMIT 4";
+    $result = $conn->query($sql_most_sold_pdt);
+    $mostSoldProducts = array();
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $mostSoldProducts[] = $row; 
+        }
+    } else {
+        echo "No results found.";
+    }
+
+    $sql_seller_count="SELECT COUNT(*) as total_seller
+    FROM tbl_seller_register
+    Where status=0";
+    $total_seller_count = $conn->query($sql_seller_count);
+    while($row=mysqli_fetch_assoc($total_seller_count)){
+        $totalSellerCount=$row['total_seller'];
+    }
+
+    $sql_agent_count="SELECT COUNT(*) as total_agent
+    FROM tbl_delivery_register
+    Where status=0";
+    $total_agent_count = $conn->query($sql_agent_count);
+    while($row=mysqli_fetch_assoc($total_agent_count)){
+        $totalAgentCount=$row['total_agent'];
+    }
     ?>
 
  
@@ -74,7 +126,9 @@
 <link href="https://demo.dashboardpack.com/architectui-html-free/main.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="path/to/pe-icon-7-stroke/css/pe-icon-7-stroke.css">
-
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Optional - Adds useful class to manipulate icon font display -->
 <link rel="stylesheet" href="path/to/pe-icon-7-stroke/css/helper.css">
@@ -133,20 +187,6 @@
                         <div class="widget-content p-0">
                             <div class="widget-content-wrapper">
                                 <div class="widget-content-left">
-                                    <div class="btn-group">
-                                        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="p-0 btn">
-                                            <!-- <img width="42" class="rounded-circle" src="" alt=""> -->
-                                            <i class="fa fa-angle-down ml-2 opacity-8"></i>
-                                        </a>
-                                        <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu-right">
-                                            <button type="button" tabindex="0" class="dropdown-item">User Account</button>
-                                            <button type="button" tabindex="0" class="dropdown-item">Settings</button>
-                                            <h6 tabindex="-1" class="dropdown-header">Header</h6>
-                                            <button type="button" tabindex="0" class="dropdown-item">Actions</button>
-                                            <div tabindex="-1" class="dropdown-divider"></div>
-                                            <button type="button" tabindex="0" class="dropdown-item">Dividers</button>
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="widget-content-left  ml-3 header-user-info">
                                     <div class="widget-heading">
@@ -156,21 +196,12 @@
                                         Admin
                                     </div>
                                 </div>
-                                <div class="widget-content-right header-user-info ml-3">
-                                    <button type="button" class="btn-shadow p-1 btn btn-primary btn-sm show-toastr-example">
-                                        <i class="fa text-white fa-calendar pr-1 pl-1"></i>
-                                    </button>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>        </div>
             </div>
-        </div>        <div class="ui-theme-settings">
-            <button type="button" id="TooltipDemo" class="btn-open-options btn btn-warning">
-                <i class="fa fa-cog fa-w-16 fa-spin fa-2x"></i>
-            </button>
-          
-        </div>        
+        </div>          
         <div class="app-main">
                 <div class="app-sidebar sidebar-shadow">
                     <div class="app-header__logo">
@@ -230,14 +261,20 @@
                                     <a href="sellerDetails.php">
                                         <i class="metismenu-icon pe-7s-display2"></i>
                                          Seller Details
-                                    </a>
+                                    
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-success"><?php echo $totalSellerCount ; ?></span>
+                                    
+                                         </a>
                                 </li>
                                 <li class="app-sidebar__heading">Shipping </li>
                                 <li>
                                     <a href="delivery.php">
                                         <i class="metismenu-icon pe-7s-display2" id="delivery"></i>
-                                         Delivery
-                                    </a>
+                                         Delivery Agent
+                                         
+                                           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-success"><?php echo $totalAgentCount ; ?></span>
+                                         
+                                          </a>
                                 </li>
                                 <li class="app-sidebar__heading">Category</li>
                                 <li>
@@ -257,6 +294,13 @@
                                     <a href="viewProducts.php">
                                         <i class="metismenu-icon pe-7s-graph2">
                                         </i>View Products
+                                    </a>
+                                </li>
+                                <li class="app-sidebar__heading">Report</li>
+                                <li>
+                                    <a href="salesReport.php">
+                                        <i class="metismenu-icon pe-7s-graph2">
+                                        </i>Sales Report
                                     </a>
                                 </li>
                                 <li class="app-sidebar__heading"><a href="../logout.php">LOGOUT</a></li>
@@ -320,19 +364,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-xl-none d-lg-block col-md-6 col-xl-4">
-                                <div class="card mb-3 widget-content bg-premium-dark">
-                                    <div class="widget-content-wrapper text-white">
-                                        <div class="widget-content-left">
-                                            <div class="widget-heading">Products Sold</div>
-                                            <div class="widget-subheading">Revenue streams</div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                            <div class="widget-numbers text-warning"><span>$14M</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 col-lg-6">
@@ -368,89 +399,54 @@
                                                 <div class="widget-chart-content text-center mt-5">
                                                     <div class="widget-description mt-0 text-warning">
                                                         <i class="fa fa-arrow-left"></i>
-                                                        <span class="pl-1">175.5%</span>
-                                                        <span class="text-muted opacity-8 pl-1">increased server resources</span>
+                                                        <span class="pl-1"></span>
+                                                        <span class="text-muted opacity-8 pl-1">Chief Sales Merchants</span>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="pt-2 card-body">
                                                 <div class="row">
+                                                <?php
+                                                // Array of colors for the progress bars
+                                                $progressColors = array('bg-primary', 'bg-success', 'bg-info', 'bg-warning');
+
+                                                // Your PHP code to fetch the top 4 most sold products goes here...
+
+                                                // HTML code to display the top 4 most sold products
+                                                $index = 0; // Index to track the color from the array
+                                                foreach ($mostSoldProducts as $product) {
+                                                    ?>
                                                     <div class="col-md-6">
                                                         <div class="widget-content">
                                                             <div class="widget-content-outer">
                                                                 <div class="widget-content-wrapper">
                                                                     <div class="widget-content-left">
-                                                                        <div class="widget-numbers fsize-3 text-muted">63%</div>
+                                                                        <div class="widget-numbers fsize-3 text-muted"><?php echo $product['percentage_of_total']; ?>%</div>
                                                                     </div>
                                                                     <div class="widget-content-right">
-                                                                        <div class="text-muted opacity-6">Generated Leads</div>
+                                                                        <div class="text-muted opacity-6"><?php echo $product['company']; ?></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="widget-progress-wrapper mt-1">
                                                                     <div class="progress-bar-sm progress-bar-animated-alt progress">
-                                                                        <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="63" aria-valuemin="0" aria-valuemax="100" style="width: 63%;"></div>
+                                                                        <div class="progress-bar <?php echo $progressColors[$index]; ?>" role="progressbar" aria-valuenow="<?php echo $product['percentage_of_total']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $product['percentage_of_total']; ?>%;"></div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        <div class="widget-content">
-                                                            <div class="widget-content-outer">
-                                                                <div class="widget-content-wrapper">
-                                                                    <div class="widget-content-left">
-                                                                        <div class="widget-numbers fsize-3 text-muted">32%</div>
-                                                                    </div>
-                                                                    <div class="widget-content-right">
-                                                                        <div class="text-muted opacity-6">Submitted Tickers</div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="widget-progress-wrapper mt-1">
-                                                                    <div class="progress-bar-sm progress-bar-animated-alt progress">
-                                                                        <div class="progress-bar bg-success" role="progressbar" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100" style="width: 32%;"></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="widget-content">
-                                                            <div class="widget-content-outer">
-                                                                <div class="widget-content-wrapper">
-                                                                    <div class="widget-content-left">
-                                                                        <div class="widget-numbers fsize-3 text-muted">71%</div>
-                                                                    </div>
-                                                                    <div class="widget-content-right">
-                                                                        <div class="text-muted opacity-6">Server Allocation</div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="widget-progress-wrapper mt-1">
-                                                                    <div class="progress-bar-sm progress-bar-animated-alt progress">
-                                                                        <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="71" aria-valuemin="0" aria-valuemax="100" style="width: 71%;"></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="widget-content">
-                                                            <div class="widget-content-outer">
-                                                                <div class="widget-content-wrapper">
-                                                                    <div class="widget-content-left">
-                                                                        <div class="widget-numbers fsize-3 text-muted">41%</div>
-                                                                    </div>
-                                                                    <div class="widget-content-right">
-                                                                        <div class="text-muted opacity-6">Generated Leads</div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="widget-progress-wrapper mt-1">
-                                                                    <div class="progress-bar-sm progress-bar-animated-alt progress">
-                                                                        <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100" style="width: 41%;"></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <?php
+                                                    // Increment the index to get the next color
+                                                    $index++;
+                                                    // Reset the index if it exceeds the length of the progressColors array
+                                                    if ($index >= count($progressColors)) {
+                                                        $index = 0;
+                                                    }
+                                                }
+                                                
+                                            ?>
+
+
                                                 </div>
                                             </div>
                                         </div>
@@ -458,130 +454,58 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card-shadow-danger mb-3 widget-chart widget-chart2 text-left card">
-                                    <div class="widget-content">
-                                        <div class="widget-content-outer">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left pr-2 fsize-1">
-                                                    <div class="widget-numbers mt-0 fsize-3 text-danger">71%</div>
-                                                </div>
-                                                <div class="widget-content-right w-100">
-                                                    <div class="progress-bar-xs progress">
-                                                        <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="71" aria-valuemin="0" aria-valuemax="100" style="width: 71%;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="widget-content-left fsize-1">
-                                                <div class="text-muted opacity-6">Income Target</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card-shadow-success mb-3 widget-chart widget-chart2 text-left card">
-                                    <div class="widget-content">
-                                        <div class="widget-content-outer">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left pr-2 fsize-1">
-                                                    <div class="widget-numbers mt-0 fsize-3 text-success">54%</div>
-                                                </div>
-                                                <div class="widget-content-right w-100">
-                                                    <div class="progress-bar-xs progress">
-                                                        <div class="progress-bar bg-success" role="progressbar" aria-valuenow="54" aria-valuemin="0" aria-valuemax="100" style="width: 54%;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="widget-content-left fsize-1">
-                                                <div class="text-muted opacity-6">Expenses Target</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card-shadow-warning mb-3 widget-chart widget-chart2 text-left card">
-                                    <div class="widget-content">
-                                        <div class="widget-content-outer">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left pr-2 fsize-1">
-                                                    <div class="widget-numbers mt-0 fsize-3 text-warning">32%</div>
-                                                </div>
-                                                <div class="widget-content-right w-100">
-                                                    <div class="progress-bar-xs progress">
-                                                        <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100" style="width: 32%;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="widget-content-left fsize-1">
-                                                <div class="text-muted opacity-6">Spendings Target</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card-shadow-info mb-3 widget-chart widget-chart2 text-left card">
-                                    <div class="widget-content">
-                                        <div class="widget-content-outer">
-                                            <div class="widget-content-wrapper">
-                                                <div class="widget-content-left pr-2 fsize-1">
-                                                    <div class="widget-numbers mt-0 fsize-3 text-info">89%</div>
-                                                </div>
-                                                <div class="widget-content-right w-100">
-                                                    <div class="progress-bar-xs progress">
-                                                        <div class="progress-bar bg-info" role="progressbar" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100" style="width: 89%;"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="widget-content-left fsize-1">
-                                                <div class="text-muted opacity-6">Totals Target</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
-                    <div class="app-wrapper-footer">
-                        <div class="app-footer">
-                            <div class="app-footer__inner">
-                                <div class="app-footer-left">
-                                    <ul class="nav">
-                                        <li class="nav-item">
-                                            <a href="javascript:void(0);" class="nav-link">
-                                                Footer Link 1
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="javascript:void(0);" class="nav-link">
-                                                Footer Link 2
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="app-footer-right">
-                                    <ul class="nav">
-                                        <li class="nav-item">
-                                            <a href="javascript:void(0);" class="nav-link">
-                                                Footer Link 3
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="javascript:void(0);" class="nav-link">
-                                                <div class="badge badge-success mr-1 ml-0">
-                                                    <small>NEW</small>
-                                                </div>
-                                                Footer Link 4
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>    </div>
+                    <!-- Footer -->
+<footer class="text-center text-lg-start bg-body-tertiary text-muted">
+  <section class="">
+    <div class="container text-center text-md-start mt-5">
+      <div class="row mt-3">
+        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">
+            <i class="fas fa-gem me-3"></i>GreenMart
+          </h6>
+          <p>
+          GreenMart:  Your one-stop shop for convenience and quality.
+          </p>
+        </div>
+        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">
+            Useful links
+          </h6>
+          <p>
+            <a href="admindashboard.php" class="text-reset">Dashboard</a>
+          </p>
+          <p>
+            <a href="orderDetails.php" class="text-reset">Order</a>
+          </p>
+          <p>
+            <a href="delivery.php" class="text-reset">Delivery Agent</a>
+          </p>
+          <p>
+            <a href="salesReport.php" class="text-reset">Report</a>
+          </p>
+        </div>
+        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+          <p><i class="fas fa-home me-3"></i> Ranni, Pathanamthitta</p>
+          <p>
+            <i class="fas fa-envelope me-3"></i>
+            greenmart893@gmail.com
+          </p>
+          <p><i class="fas fa-phone me-3"></i> 7306897518</p>
+          <p><i class="fas fa-print me-3"></i> 8874598715</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+    © 2024 Copyright:
+    <a class="text-reset fw-bold" href="#">GreenMart</a>
+  </div>
+</footer>
+<!-- Footer -->
+    </div>
                 <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
         </div>
     </div>

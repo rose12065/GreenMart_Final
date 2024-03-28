@@ -18,20 +18,38 @@
     while($row=mysqli_fetch_assoc($total_orderCount)){
         $totalOrder=$row['total_orders'];
     }
+    if (isset($_GET['category_id'])) {
+        $categoryId = $_GET['category_id'];
+    $sql_category="SELECT * FROM tbl_category where category_id=$categoryId";
+    $all_category = $conn->query($sql_category);
+    while($row=mysqli_fetch_assoc($all_category)){
+        $catName=$row['category_name'];
+    }
 
-    $sql_delivery="SELECT
-    tbl_role.role_id,
-    tbl_role.email,
-    tbl_delivery_register.*
-    FROM
-        tbl_role
-    JOIN
-        tbl_delivery_register ON tbl_role.role_id = tbl_delivery_register.role_id
-    WHERE
-        tbl_role.role = 'DELIVERY'";
-    $all_delivery = $conn->query($sql_delivery);
+    if(isset($_POST['edit_cat'])){
+        $new_cat_name=$_POST['category'];
+        $sql_category="SELECT * FROM tbl_category WHERE category_name= '$new_cat_name'";
+        $catCheckResult = mysqli_query($conn,  $sql_category);
+        if (mysqli_num_rows($catCheckResult) > 0) {  
+            
+            echo"<script>
+            alert('The category already exsit');
+            window.location.href='viewCategory.php';</script>";  
+            exit();
+        }
+        $sql_update="UPDATE tbl_category SET category_name='$new_category_name' WHERE category_id='$categoryId'";
+        if ($conn->query($sql_update) === TRUE) {
 
-    $sql_seller_count="SELECT COUNT(*) as total_seller
+            echo"alert('The category edited succesfully');
+            <script>window.location.href='viewCategory.php';</script>";
+            
+        } else {
+            echo "Error: " . $conn->error;
+        }
+    }
+}
+
+$sql_seller_count="SELECT COUNT(*) as total_seller
     FROM tbl_seller_register
     Where status=0";
     $total_seller_count = $conn->query($sql_seller_count);
@@ -45,8 +63,33 @@
     $total_agent_count = $conn->query($sql_agent_count);
     while($row=mysqli_fetch_assoc($total_agent_count)){
         $totalAgentCount=$row['total_agent'];
-    }
 
+        $sql_report="SELECT 
+    p.product_id,
+    p.product_name,
+    SUM(o.quantity) AS total_quantity_sold,
+    SUM(o.quantity * o.unit_price) AS total_revenue
+    FROM 
+    tbl_order o
+    JOIN 
+    tbl_product p ON o.product_id = p.product_id
+    GROUP BY 
+    p.product_id, p.product_name";
+
+    $report=$conn->query($sql_report);
+    
+    $sql_monthly_report=" SELECT 
+        MONTH(o.order_date) AS month,
+        SUM(o.quantity * o.unit_price) AS total_revenue
+    FROM 
+        tbl_order o
+    JOIN 
+        tbl_product p ON o.product_id = p.product_id
+    GROUP BY 
+        MONTH(o.order_date)
+    ";
+    $result_monthly_report=$conn->query($sql_monthly_report);
+    }
 ?>
 <!doctype html>
 <html lang="en">
@@ -71,8 +114,46 @@
     height: calc(100vh - 60px); /* Adjust the height as needed */
     overflow-y: auto;
 }
-
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+       
 </style>
+</style>
+</head>
+
 </head>
 <body>
     <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
@@ -109,51 +190,16 @@
             </div>    <div class="app-header__content">
                 <div class="app-header-left">
                     <div class="search-wrapper">
-                        <div class="input-holder">
-                            <input type="text" class="search-input" placeholder="Type to search">
-                            <button class="search-icon"><span></span></button>
-                        </div>
+                        
                         <button class="close"></button>
                     </div>
-                    <ul class="header-menu nav">
-                        <li class="nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
-                                <i class="nav-link-icon fa fa-database"> </i>
-                                Statistics
-                            </a>
-                        </li>
-                        <li class="btn-group nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
-                                <i class="nav-link-icon fa fa-edit"></i>
-                                Projects
-                            </a>
-                        </li>
-                        <li class="dropdown nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
-                                <i class="nav-link-icon fa fa-cog"></i>
-                                Settings
-                            </a>
-                        </li>
-                    </ul>        </div>
+                           </div>
                 <div class="app-header-right">
                     <div class="header-btn-lg pr-0">
                         <div class="widget-content p-0">
                             <div class="widget-content-wrapper">
                                 <div class="widget-content-left">
-                                    <div class="btn-group">
-                                        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="p-0 btn">
-                                            <!-- <img width="42" class="rounded-circle" src="" alt=""> -->
-                                            <i class="fa fa-angle-down ml-2 opacity-8"></i>
-                                        </a>
-                                        <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu-right">
-                                            <button type="button" tabindex="0" class="dropdown-item">User Account</button>
-                                            <button type="button" tabindex="0" class="dropdown-item">Settings</button>
-                                            <h6 tabindex="-1" class="dropdown-header">Header</h6>
-                                            <button type="button" tabindex="0" class="dropdown-item">Actions</button>
-                                            <div tabindex="-1" class="dropdown-divider"></div>
-                                            <button type="button" tabindex="0" class="dropdown-item">Dividers</button>
-                                        </div>
-                                    </div>
+
                                 </div>
                                 <div class="widget-content-left  ml-3 header-user-info">
                                     <div class="widget-heading">
@@ -163,11 +209,7 @@
                                         Admin
                                     </div>
                                 </div>
-                                <div class="widget-content-right header-user-info ml-3">
-                                    <button type="button" class="btn-shadow p-1 btn btn-primary btn-sm show-toastr-example">
-                                        <i class="fa text-white fa-calendar pr-1 pl-1"></i>
-                                    </button>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>        </div>
@@ -242,7 +284,7 @@
                                 <li>
                                     <a href="delivery.php">
                                         <i class="metismenu-icon pe-7s-display2"></i>
-                                          Delivery Agent 
+                                          Delivery Agent
                                           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-success"><?php echo $totalAgentCount ; ?></span>
                                     </a>
                                 </li>
@@ -277,8 +319,7 @@
                             </ul>
                         </div>
                     </div>
-                </div>   
-                 <div class="app-main__outer">
+                </div>    <div class="app-main__outer">
                     <div class="app-main__inner">
                         <div class="app-page-title">
                             <div class="page-title-wrapper">
@@ -294,77 +335,87 @@
                                 </div>
                               </div> 
                         </div>
-                    <div class="row">
-                    <table class="table align-middle">
-  <thead>
-    <tr>
-      <th scope="col">S.No</th>
-      <th scope="col">Agent Name</th>
-      <th scope="col">Email</th>
-      <th scope="col">Phone No.</th>
-      <th scope="col">Experience</th>
-      <th scope="col">Document</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <?php
-        $serialNumber = 1; 
-        while($row=mysqli_fetch_assoc($all_delivery)){   
-                                                       
-?>
-  <tbody>
-    <tr>
-      <th scope="row"><?php echo $serialNumber  ?></th>
-      <td><?php echo $row['agent_name'] ?></td>
-      <td><?php echo $row['email'] ?></td>
-      <td><?php echo $row['phone'] ?></td>
-      <td><?php echo $row['experience'] ?></td>
-      <td><a href="downloadCV.php?delivery_id=<?php echo $row['role_id']; ?>" target="_blank">Download</a></td>     
-<td>
-<form action="" method="post">
-<?php
-if ($row['status'] == 0) {
-  ?> <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark" onclick="return confirm('Are you sure?')" id="approve_agent">
-  <a href="approveagent.php ? agent_id=<?php echo $row['role_id'] ?>" > <span class="badge badge-danger rounded-pill d-inline"> Approve</span></a>
-  </button>
-   <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark">
-  <a href="rejectagent.php ? agent_id=<?php echo $row['role_id'] ?>" > <span class="badge badge-danger rounded-pill d-inline"> Reject</span></a>
-  </button>
-<?php }
-elseif($row['status'] == 1){
-  ?><button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark" >
-       <span class="badge badge-success rounded-pill d-inline"> Approved</span>
-  </button>
-<?php }
-if($row['status']==2){
-?>
- <button type="button" class="btn btn-link btn-sm px-3" data-ripple-color="dark">
-       <span class="badge badge-warning rounded-pill d-inline"> Rejected</span>
-  </button>     
-<?php }
-?>    
-</td>
+                        
+                    <div class="row ">
+                            
+                    <div class="container">
+    <h1>Sales Report <a id= "dwld_report" href="ReportPdf.php" download="ReportPdf.pdf" class="download-button"><span class="material-symbols-outlined">
+download
+</span></a></h1>
+        <p>Date: <?php echo date('Y-m-d'); ?></p>
+        
+        <h2>Overall Sales Summary</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Total Sales</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php
+                    while($row=mysqli_fetch_assoc($result_monthly_report)){
+                    
+                ?>
+                <!-- Loop through sales data to populate table rows -->
+                <tr>
+                    <td><?php echo date("F", mktime(0, 0, 0, $row['month'], 1)) ?></td>
+                    <td><?php echo $row['total_revenue'] ?></td>
+                </tr>
+                <!-- Add more rows as needed -->
+                <?php
+                    }
+                ?>
+            </tbody>
+        </table>
 
-</form>
+        <h2>Product-wise Sales</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity Sold</th>
+                    <th>Total Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    while($row=mysqli_fetch_assoc($report)){
+                    
+                ?>
+                <!-- Loop through product sales data to populate table rows -->
+                <tr>
+                    <td><?php echo $row['product_name'] ?></td>
+                    <td><?php echo $row['total_quantity_sold'] ?></td>
+                    <td><?php echo $row['total_revenue']?></td>
+                </tr>
+                <!-- Add more rows as needed -->
+                <?php
+                    }
+                ?>
+            </tbody>
+        </table>
 
-      </td>
-      
-    </tr>
-    
-  </tbody>
-  <?php
-     $serialNumber++;
-        }
-        ?>
-</table>
+        <div class="footer">
+            Generated by GreenMart &bull; <?php echo date('Y'); ?>
+        </div>
+    </div>
+                        </div>
 
-</div>
+                    </div>        
+                   
+                       </div>
+                <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
+        </div>
+    </div>
+                            
+                    </div>
 
 
                 <br><br>
 
 
-                <footer class="text-center text-lg-start bg-body-tertiary text-muted fixed-bottom"">
+                <footer class="text-center text-lg-start bg-body-tertiary text-muted ">
  
  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
    © 2024 Copyright:
@@ -374,5 +425,7 @@ if($row['status']==2){
                 <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
         </div>
     </div>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
 <script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-free/assets/scripts/main.js"></script></body>
 </html>

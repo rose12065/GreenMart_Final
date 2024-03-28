@@ -1,4 +1,5 @@
-<?php session_start() ;
+<?php
+ session_start() ;
 ?>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
@@ -78,15 +79,14 @@
 
         $hash = password_hash( $psw , PASSWORD_DEFAULT );
 
-        $sql = mysqli_query($connect, "SELECT * FROM tbl_user_register WHERE user_email='$Email'");
+        $sql = mysqli_query($connect, "SELECT * FROM tbl_role WHERE email='$Email'");
         $query = mysqli_num_rows($sql);
   	    $fetch = mysqli_fetch_assoc($sql);
 
         if($Email){
             $new_pass = $hash;
             mysqli_query($connect, "UPDATE tbl_role SET password='$psw' WHERE email='$Email'");
-            mysqli_query($connect, "UPDATE tbl_user_register SET user_password='$psw' WHERE user_email='$Email'");
-            ?>
+             ?>
             <script>
                 window.location.replace("index.php");
                 alert("<?php echo "your password has been succesful reset"?>");

@@ -8,7 +8,7 @@ if (isset($_POST['search'])) {
     $searchQuery = $_POST['search'];
 
     // Construct SQL query to search for products
-    $sql = "SELECT * FROM tbl_product WHERE product_name LIKE '%$searchQuery%' ";
+    $sql = "SELECT * FROM tbl_product WHERE product_name LIKE '%$searchQuery%' and status=0";
 
     // Execute the query
     $result = mysqli_query($conn, $sql);
@@ -60,9 +60,11 @@ if (isset($_POST['search'])) {
                 <div class="input-group product-qty col-md-2 border border-secondary border-3">
                     <input type="number" id="quantity" name="quantity" class="form-control"value="1" min="1" max="100">
                 </div>
-
-                <button type="submit" class="btn btn-default btn-xs pull-right" name="add_to_cart">Add to Cart</button>
-            </div>
+                <?php
+if ($stock > 0) {
+            echo '<button type="submit" id="add" class="btn btn-default btn-xs pull-right" name="add_to_cart">Add to Cart</button>';
+        }
+        ?> </div>
         </form>
     </div>
 

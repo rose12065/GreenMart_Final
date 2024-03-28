@@ -48,6 +48,22 @@
         }
     }
 }
+
+$sql_seller_count="SELECT COUNT(*) as total_seller
+    FROM tbl_seller_register
+    Where status=0";
+    $total_seller_count = $conn->query($sql_seller_count);
+    while($row=mysqli_fetch_assoc($total_seller_count)){
+        $totalSellerCount=$row['total_seller'];
+    }
+
+    $sql_agent_count="SELECT COUNT(*) as total_agent
+    FROM tbl_delivery_register
+    Where status=0";
+    $total_agent_count = $conn->query($sql_agent_count);
+    while($row=mysqli_fetch_assoc($total_agent_count)){
+        $totalAgentCount=$row['total_agent'];
+    }
 ?>
 <!doctype html>
 <html lang="en">
@@ -67,6 +83,13 @@
 
 <!-- Optional - Adds useful class to manipulate icon font display -->
 <link rel="stylesheet" href="path/to/pe-icon-7-stroke/css/helper.css">
+<style>
+    .scrollbar-sidebar {
+    height: calc(100vh - 60px); /* Adjust the height as needed */
+    overflow-y: auto;
+}
+
+</style>
 </head>
 
 </head>
@@ -231,13 +254,15 @@
                                     <a href="sellerDetails.php">
                                         <i class="metismenu-icon pe-7s-display2"></i>
                                          Seller Details
+                                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-success"><?php echo $totalSellerCount ; ?></span>
                                     </a>
                                 </li>
                                 <li class="app-sidebar__heading">Shipping </li>
                                 <li>
                                     <a href="delivery.php">
                                         <i class="metismenu-icon pe-7s-display2"></i>
-                                          Delivery
+                                          Delivery Agent
+                                          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-success"><?php echo $totalAgentCount ; ?></span>
                                     </a>
                                 </li>
                                 <li class="app-sidebar__heading">Category</li>
@@ -258,6 +283,13 @@
                                     <a href="viewProducts.php">
                                         <i class="metismenu-icon pe-7s-graph2">
                                         </i>View Products
+                                    </a>
+                                </li>
+                                <li class="app-sidebar__heading">Report</li>
+                                <li>
+                                    <a href="salesReport.php">
+                                        <i class="metismenu-icon pe-7s-graph2">
+                                        </i>Sales Report
                                     </a>
                                 </li>
                                 <li class="app-sidebar__heading"><a href="../logout.php">LOGOUT</a></li>
@@ -296,43 +328,13 @@
                 <br><br>
 
 
-                    <div class="app-wrapper-footer ">
-                        <div class="app-footer">
-                            <div class="app-footer__inner">
-                                <div class="app-footer-left">
-                                    <ul class="nav">
-                                        <li class="nav-item">
-                                            <a href="javascript:void(0);" class="nav-link">
-                                                Footer Link 1
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="javascript:void(0);" class="nav-link">
-                                                Footer Link 2
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="app-footer-right">
-                                    <ul class="nav">
-                                        <li class="nav-item">
-                                            <a href="javascript:void(0);" class="nav-link">
-                                                Footer Link 3
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="javascript:void(0);" class="nav-link">
-                                                <div class="badge badge-success mr-1 ml-0">
-                                                    <small>NEW</small>
-                                                </div>
-                                                Footer Link 4
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>    </div>
+                <footer class="text-center text-lg-start bg-body-tertiary text-muted fixed-bottom"">
+ 
+ <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+   © 2024 Copyright:
+   <a class="text-reset fw-bold" href="#">GreenMart</a>
+ </div>
+</footer>   </div>
                 <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
         </div>
     </div>

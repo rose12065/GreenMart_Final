@@ -9,6 +9,7 @@ $pdt_recommed = "SELECT DISTINCT p.product_id, p.*
 FROM tbl_pdt_recommendation r 
 JOIN tbl_product p ON p.product_id = r.product_id 
 WHERE r.user_id = $userId 
+And p.status=0
 ORDER BY r.rec_id DESC 
 LIMIT 5;
 ";
@@ -293,7 +294,7 @@ while ($row = mysqli_fetch_assoc($all_cat)) {
     </section>
     <?php
 $id = $_SESSION['id'];
-$sql = "SELECT * FROM tbl_product ";
+$sql = "SELECT * FROM tbl_product where status=0";
 $all_product = $conn->query($sql);
 
 /*$find_user = mysqli_query($conn,$query);

@@ -69,7 +69,9 @@ $all_products = $conn->query($sql);
                 <h5 class="mb-3"><a href="dashboard.php" class="text-body"><i
                       class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping</a></h5>
                 <hr>
-
+                <?php
+                if (mysqli_num_rows($all_products) > 0) {
+                  ?>
                 <div class="d-flex justify-content-between align-items-center mb-4">
                   <div>
                     <p class="mb-1">Shopping cart</p>
@@ -127,7 +129,7 @@ $shipcharge=0.00;
 $totalAmount+=$total;
 $checkoutAmount=$shipcharge+$totalAmount;
 }
- 
+                 
 ?>
                 
               </div>
@@ -168,7 +170,18 @@ $checkoutAmount=$shipcharge+$totalAmount;
                     </form>
 
                     <?php
+                   }
+                   else {
+                     // Display a message when there are no items in the wishlist
+                     echo '
+                     <div class="card bg-light">
+                     <div class="card-body">
+                       <p class="mb-0">No items in the cart</p>
+                     </div>
+                   </div>
                    
+               ';
+                   }
                     if(isset($_POST['checkout_btn'])){
                       
                       $user_id = $_POST['user_id'];
