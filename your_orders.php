@@ -22,7 +22,10 @@
 <body>
     <div class="container mt-5">
         <h2 class="mb-4">Orders History</h2>
-        
+        <?php
+        if (mysqli_num_rows($all_product) > 0) 
+        {
+            ?>
         <!-- Bootstrap Table to Display Orders -->
         <table class="table table-striped">
             <thead>
@@ -38,8 +41,7 @@
             </thead>
             <tbody>
 <?php
- if (mysqli_num_rows($all_product) > 0) 
- {
+ 
 
 while ($row = mysqli_fetch_assoc($all_product)) {
 ?>

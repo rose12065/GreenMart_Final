@@ -173,23 +173,23 @@
 
             
         </div>
+        <footer class="text-center text-lg-start bg-body-tertiary text-muted">
+ 
+ <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+   © 2024 Copyright:
+   <a class="text-reset fw-bold" href="#">GreenMart</a>
+ </div>
+</footer> 
     </div>
 </div>
-                    <!-- Agent Main Content -->
-                    <!-- ... (similar to the admin dashboard) -->
                     
                 </div>
             </div>
         </div>
 
-        <!-- Optional: Theme Settings -->
-        <div class="ui-theme-settings">
-            <!-- ... (similar to the admin dashboard) -->
-        </div>
     </div>
 
-    <!-- Your Scripts -->
-    <!-- ... (include your JavaScript files and other scripts) -->
+   
 
 </body>
 </html>

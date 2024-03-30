@@ -149,7 +149,7 @@ if(!isset($_SESSION['access_token']))
             $query = "SELECT u.*, r.*
             FROM tbl_user_register u
             JOIN tbl_role r ON u.role_id = r.role_id
-            WHERE u.user_email = '$email'";
+            WHERE r.email = '$email'";
             $find_user = mysqli_query($conn,$query);
             $result = mysqli_fetch_all($find_user,MYSQLI_ASSOC);
           if(count($result) > 0) {

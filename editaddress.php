@@ -61,14 +61,6 @@ while($row = mysqli_fetch_assoc($all_product)){
                 <input type="text" class="form-control" id="area"name="area" placeholder="Enter area, street, landmark"value="<?php echo $landmark;?> " onkeyup="validateArea()"required>
                 <span id="lblErrorArea" style="color: red"></span>
             </div>
-            <div class="form-group">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="defaultAddress">
-                    <label class="form-check-label" for="defaultAddress">
-                        Make this my default address
-                    </label>
-                </div>
-            </div>
             
             <button type="submit" id="update_address"name="update_address"class="btn btn-primary">update Address</button>
         </form>

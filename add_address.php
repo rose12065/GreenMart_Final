@@ -70,9 +70,9 @@ $area = $_POST['area'];
 $sql = "INSERT INTO tbl_address (user_id, name, mobile, pincode, flat, landmark) 
         VALUES ('$user_id', '$name', '$mobile_number', '$pincode', '$flat', '$area')";
 
-if ($conn->query($sql) === TRUE) {
-    echo "<script>window.location.href='account-settings.php';</scrtpt>";
-    
+if ($conn->query($sql) == TRUE) {
+    echo "<script>window.location.href='account-settings.php';</script>";
+     
 } else {
     echo "Error: " . $conn->error;
 }
@@ -82,7 +82,7 @@ if ($conn->query($sql) === TRUE) {
 
 mysqli_close($conn); // Close the database connection
 ?>
-
+<script src="js/myscripts.js"> </script>
 </html>
 
    

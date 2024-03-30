@@ -142,6 +142,7 @@
             <th>Customer Name</th>
             <th>Delivery Address</th>
             <th>Order Status</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody>
@@ -209,7 +210,10 @@
         $sql_delivery_status_update = "UPDATE tbl_order SET delivery_status = 'Delivered' WHERE order_id =  '$order_id'";
         if ($conn->query($sql_delivery_status_update) == TRUE)
         {
-            echo'<script>alert("Do you successfully delivered")</script>';
+            echo'<script>alert("Do you successfully delivered")
+            window.location.href = "http://localhost/GreenMart_final/shipping/agentCompleteOrderView.php"</script>
+            ';
+
         }
     }
     $conn->close();
@@ -228,23 +232,24 @@
 
             
         </div>
+        <footer class="text-center text-lg-start bg-body-tertiary text-muted">
+ 
+ <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+   © 2024 Copyright:
+   <a class="text-reset fw-bold" href="#">GreenMart</a>
+ </div>
+</footer> 
     </div>
 </div>
-                    <!-- Agent Main Content -->
-                    <!-- ... (similar to the admin dashboard) -->
                     
+        
                 </div>
             </div>
         </div>
 
-        <!-- Optional: Theme Settings -->
-        <div class="ui-theme-settings">
-            <!-- ... (similar to the admin dashboard) -->
-        </div>
+        
     </div>
 
-    <!-- Your Scripts -->
-    <!-- ... (include your JavaScript files and other scripts) -->
 
 </body>
 </html>

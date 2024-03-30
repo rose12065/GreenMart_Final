@@ -74,7 +74,8 @@ $sql_seller_count="SELECT COUNT(*) as total_seller
     JOIN 
     tbl_product p ON o.product_id = p.product_id
     GROUP BY 
-    p.product_id, p.product_name";
+    p.product_id, p.product_name
+    order by total_quantity_sold desc";
 
     $report=$conn->query($sql_report);
     

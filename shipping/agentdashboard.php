@@ -12,29 +12,7 @@
         $agent_status = $row['status'];
         $agent_phone = $row['phone'];
     }
-        $sql = "SELECT 
-                    o.order_id,
-                    o.user_id,
-                    o.delivery_status,
-                    o.order_date,
-                    p.address_id,
-                    p.total_amount,
-                    u.user_name
-                FROM 
-                    tbl_order o
-                JOIN 
-                    tbl_price p ON o.price_id = p.price_id
-                JOIN 
-                    tbl_user_register u ON o.user_id = u.user_id
-                WHERE 
-                    o.delivery_status = 0
-                    AND o.status = 0
-                    AND p.status = 0";
-                    
-
-        $result = $conn->query($sql);
-
-        $conn->close();
+      
 ?>
 
 
@@ -56,6 +34,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="path/to/pe-icon-7-stroke/css/pe-icon-7-stroke.css">
     <link rel="stylesheet" href="path/to/pe-icon-7-stroke/css/helper.css">
+    <link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"/>
 </head>
 <body>
     <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
@@ -164,61 +145,63 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Delivery Status</h5>
-                    <!-- Display delivery status information here -->
-                    <p class="card-text">Pending Deliveries: </p>
-                    <p class="card-text">Completed Deliveries: </p>
-                </div>
-            </div>
-            <?php
-                // if ($result->num_rows > 0) {
-                //     // Output data of each row
-                //     while ($row = $result->fetch_assoc()) {
-                //         echo "Order ID: " . $row["order_id"] . "<br>";
-                //         echo "Customer Name: " . $row["user_name"] . "<br>";
-                //         echo "Delivery Status: " . $row["delivery_status"] . "<br>";
-                //         echo "Order Date: " . $row["order_date"] . "<br>";
-                //         echo "Address ID: " . $row["address_id"] . "<br>";
-                //         echo "Total Amount: " . $row["total_amount"] . "<br>";
-                //         echo "------------------------<br>";
-                  ?>
-            <!-- <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">Recent Deliveries</h5>
-                    
-                    <ul>
-                        <li>Delivery #1 - Status: Pending</li>
-                        <li>Delivery #2 - Status: Completed</li>
-                        
-                    </ul>
-                </div>
-            </div> -->
-
-            <?php
-                // }
-                // } 
-            ?>
-        </div>
+        
     </div>
 </div>
-                    <!-- Agent Main Content -->
-                    <!-- ... (similar to the admin dashboard) -->
-                    
-                </div>
-            </div>
+      
+</div>
+            
+        
+                               <!-- Footer -->
+<footer class="text-center text-lg-start bg-body-tertiary text-muted">
+  <section class="">
+    <div class="container text-center text-md-start mt-5">
+      <div class="row mt-3">
+        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">
+            <i class="fas fa-gem me-3"></i>GreenMart
+          </h6>
+          <p>
+          GreenMart:  Your one-stop shop for convenience and quality.
+          </p>
         </div>
-
-        <!-- Optional: Theme Settings -->
-        <div class="ui-theme-settings">
-            <!-- ... (similar to the admin dashboard) -->
+        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">
+            Useful links
+          </h6>
+          <p>
+            <a href="agentdashboard.php" class="text-reset">Dashboard</a>
+          </p>
+          <p>
+            <a href="agentOrderView.php" class="text-reset">Orders</a>
+          </p>
+          <p>
+            <a href="agentCompleteOrderView.php" class="text-reset">Completed Orders</a>
+          </p>
         </div>
+        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+          <p><i class="fas fa-home me-3"></i> Ranni, Pathanamthitta</p>
+          <p>
+            <i class="fas fa-envelope me-3"></i>
+            greenmart893@gmail.com
+          </p>
+          <p><i class="fas fa-phone me-3"></i> 7306897518</p>
+          <p><i class="fas fa-print me-3"></i> 8874598715</p>
+        </div>
+      </div>
     </div>
+  </section>
+  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+    © 2024 Copyright:
+    <a class="text-reset fw-bold" href="#">GreenMart</a>
+  </div>
+</footer>
+<!-- Footer -->
+</div>
+</div> 
+    </div>            
 
-    <!-- Your Scripts -->
-    <!-- ... (include your JavaScript files and other scripts) -->
 
 </body>
 </html>
