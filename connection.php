@@ -1,9 +1,9 @@
 <?php 
 session_start();
-    $servername = "localhost";
+    $servername = "viaduct.proxy.rlwy.net";
     $username = "root";
-    $password = "";
-    $dbname = "greenmart";
+    $password = "PJpfGEYbrvPeilCTkpNhLVsrkqbLkbEU";
+    $dbname = "railway";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
 

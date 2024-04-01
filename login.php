@@ -1,6 +1,5 @@
 <?php
     require('navbar.php');
-    //require('connection.php');
 ?>
 <html>
  <head>
