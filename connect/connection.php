@@ -1,8 +1,7 @@
 <?php 
-
-$dbServername = "viaduct.proxy.rlwy.net";
+$dbServername = "localhost";
 $dbUsername = "root";
-$dbPassword = "PJpfGEYbrvPeilCTkpNhLVsrkqbLkbEU";
+$dbPassword = "";
 $dbName = "greenmart";
 
 $connect = new mysqli($dbServername, $dbUsername, $dbPassword, $dbName);
